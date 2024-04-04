@@ -1,9 +1,9 @@
-import React, { ReactEventHandler, useState } from 'react'
+import React, { ReactEventHandler, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import productContext from '../ProductsContext/productContext'
 
 const Login = () => {
-    const [name, setName] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
+    const {name, password, setName, setPassword, handleLogin}: any = useContext(productContext)
     const navigate = useNavigate()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,21 +16,13 @@ const Login = () => {
             setName('')
             setPassword('')
             
-            const response = await fetch('https://dummyjson.com/auth/login', {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': "application/json"
-                },
-                body: JSON.stringify({username: name, password: password})
-            })
-    
-            const json = await response.json();
-            if(json) {
-                localStorage.setItem('token', json.token)
+            const resp = await handleLogin()
+            console.log(resp)
+            if(resp) {
+                localStorage.setItem('token', resp.token)
                 navigate('/')
             }
             
-            // console.log(json.token)
         }
     }
     return (

@@ -11,7 +11,6 @@ const HomePage = () => {
     useEffect(() => {
       if(localStorage.getItem('token')) {
         getProducts()
-        // console.log(products)
       }
       else {
         navigate('/login')
