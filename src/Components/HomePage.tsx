@@ -1,23 +1,32 @@
 import React, { useContext, useEffect } from 'react'
 import productContext from '../ProductsContext/productContext'
+import { useNavigate } from 'react-router-dom'
+import Navbar from './Navbar'
 
 const HomePage = () => {
     const context = useContext(productContext)
     const {products, getProducts }: any = context
+    const navigate = useNavigate()
 
     useEffect(() => {
+      if(localStorage.getItem('token')) {
         getProducts()
-        console.log(products)
-        //eslint-disable-next-line
-    }, [0])
+      }
+      else {
+        navigate('/login')
+      }
+      //eslint-disable-next-line
+    }, [])
 
   return (
+    <>
+      <Navbar />
     <div className='container mt-3'>
         <div className='row'>
         {products.map((product: any) => {
             return <>
-            <div key={product.id} className='col-md-3 my-3 border text-center'>
-                <div className="card rounded-3 border border-black border-3" style={{width: "20rem"}} >
+            <div key={product.id} className='col-md-3 my-3 text-center'>
+                <div className="card" style={{width: "20rem"}} >
                     <img src={product.images[0]} className="card-img-top rounded-top" alt="..." style={{height: "300px"}}/>
                         <div className="card-body" >
                             <h5 className="card-title">{product.title.slice(0, 20) + "..."}</h5>
@@ -29,6 +38,7 @@ const HomePage = () => {
         </>})}
       </div>
     </div>
+    </>
   )
 }
 
