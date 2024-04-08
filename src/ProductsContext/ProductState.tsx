@@ -22,7 +22,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       headers: {
         'Content-Type': "application/json"
       },
-      body: JSON.stringify({ username: name, password: password, expiresInMins: 1 })
+      body: JSON.stringify({ username: name, password: password })
     })
 
     const json = await response.json();
