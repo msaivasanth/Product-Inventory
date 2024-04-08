@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import productContext from './productContext'
 
 interface ProductStateProps {
-  children: ReactNode; 
+  children: ReactNode;
 }
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const host = 'https://dummyjson.com/products'
@@ -22,13 +22,33 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       headers: {
         'Content-Type': "application/json"
       },
-      body: JSON.stringify({ username: name, password: password })
+      body: JSON.stringify({ username: name, password: password, expiresInMins: 1 })
     })
 
     const json = await response.json();
     return json
   }
-  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin };
+
+  const handleGetDetails = async (id: number) => {
+    const check = await fetch('https://dummyjson.com/auth/me', {
+      method: 'GET',
+      headers: {
+        "Authorization": localStorage.getItem('token')!
+      }
+    })
+    const checkRes = await check.json()
+    if (!checkRes.id) {
+      localStorage.removeItem('token')
+      // navigate('/login')
+      return null
+    }
+    else {
+      const response = await fetch(`https://dummyjson.com/products/${id}`)
+      const json = await response.json();
+      return json
+    }
+  }
+  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails };
   return (
     <productContext.Provider value={value}>
       {props.children}
