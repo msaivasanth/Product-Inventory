@@ -10,7 +10,7 @@ const HomePage = () => {
 
     useEffect(() => {
       if(localStorage.getItem('token')) {
-        getProducts()
+        getProductsFn()
       }
       else {
         navigate('/login')
@@ -18,6 +18,10 @@ const HomePage = () => {
       //eslint-disable-next-line
     }, [])
 
+    const getProductsFn = async () => {
+      const res = await getProducts()
+      if(res === null) navigate('/login')
+    }
   return (
     <>
       <Navbar />
