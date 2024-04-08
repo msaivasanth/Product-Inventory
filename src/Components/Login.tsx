@@ -17,7 +17,7 @@ const Login = () => {
             setPassword('')
             
             const resp = await handleLogin()
-            console.log(resp)
+            
             if(resp) {
                 localStorage.setItem('token', resp.token)
                 navigate('/')

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import productContext from '../ProductsContext/productContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 
 const HomePage = () => {
@@ -10,7 +10,7 @@ const HomePage = () => {
 
     useEffect(() => {
       if(localStorage.getItem('token')) {
-        getProducts()
+        getProductsFn()
       }
       else {
         navigate('/login')
@@ -18,6 +18,10 @@ const HomePage = () => {
       //eslint-disable-next-line
     }, [])
 
+    const getProductsFn = async () => {
+      const res = await getProducts()
+      if(res === null) navigate('/login')
+    }
   return (
     <>
       <Navbar />
@@ -31,7 +35,7 @@ const HomePage = () => {
                         <div className="card-body" >
                             <h5 className="card-title">{product.title.slice(0, 20) + "..."}</h5>
                             <p className="card-text">{product.description.slice(0, 50) + "..."}</p>
-                            <a href="#" className="btn btn-primary">Read More</a>
+                            <Link to={`product/${product.id}`} className="btn btn-primary">Read More</Link>
                         </div>
                 </div>
             </div>
