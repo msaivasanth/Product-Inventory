@@ -1,5 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react'
 import productContext from './productContext'
+import thumbnailImg from '../images/dummy.jpg'
+import Img from '../images/image.webp'
 
 interface ProductStateProps {
   children: ReactNode;
@@ -10,6 +12,8 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+
+  let data = JSON.parse(localStorage.getItem('products') !) || []
 
   const handleLogin = async () => {
     const response = await fetch(`${host}/auth/login`, {
@@ -45,9 +49,15 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if(res === null) return null 
     else {
-      const response = await fetch(`${host}/products?limit=0`);
-      const json = await response.json();
-      setProducts(json.products)
+      if(data.length === 0) {
+        const response = await fetch(`${host}/products?limit=0`);
+        const json = await response.json();
+        localStorage.setItem('products', JSON.stringify(json.products))
+        setProducts(json.products)
+      }
+      else {
+        setProducts(data)
+      }
     }
   }
 
@@ -56,14 +66,41 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       const res = await checkFn();
       if(res === null) return null 
       else {
-        const response = await fetch(`${host}/products/${id}`)
-        const json = await response.json();
+        if(id < 100) {const response = await fetch(`${host}/products/${id}`)}
+        // const json = await response.json();
+
+        let json = {}
+        for(let i = 0; i < data.length; i++) {
+          const pro = data[i]
+          if(pro.id == id) {
+            json = pro;
+            break;
+          }
+        }
         return json
       }
   }
 
+  const handleAddItem = async (title: string, desc: string) => {
+    const res = await checkFn();
+    if(res === null) return null 
+    else {
+      const thumbnail = thumbnailImg;
+      const images = [Img]
+      const newItem = {
+        id: data.length + 1,
+        title: title,
+        description: desc,
+        thumbnail: thumbnail,
+        images: images
+      }
 
-  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails };
+      data.push(newItem)
+      localStorage.setItem('products', JSON.stringify(data))
+      console.log(JSON.parse(localStorage.getItem('products') !))
+    }
+  }
+  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem };
   return (
     <productContext.Provider value={value}>
       {props.children}

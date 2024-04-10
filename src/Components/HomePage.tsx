@@ -33,8 +33,8 @@ const HomePage = () => {
                 <div className="card" style={{width: "20rem"}} >
                     <img src={product.images[0]} className="card-img-top rounded-top" alt="..." style={{height: "300px"}}/>
                         <div className="card-body" >
-                            <h5 className="card-title">{product.title.slice(0, 20) + "..."}</h5>
-                            <p className="card-text">{product.description.slice(0, 50) + "..."}</p>
+                            <h5 className="card-title">{product.title.slice(0, 20) + (product.title.length > 20 ? "...": "")}</h5>
+                            <p className="card-text">{product.description.slice(0, 50) + (product.description.length > 20 ? "...": "")}</p>
                             <Link to={`product/${product.id}`} className="btn btn-primary">Read More</Link>
                         </div>
                 </div>

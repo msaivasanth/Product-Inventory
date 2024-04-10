@@ -39,7 +39,7 @@ const ProductItem = () => {
         <div>
             <h1 className='text-center'>Product Details...</h1>
             <div className="text-center mt-5">
-                <img className='' src={`${productDetails.thumbnail}`} alt="" style={{ height: '500px' }} />
+                <img className='' src={`${productDetails.thumbnail}`} alt="" style={{ height: '500px', width: '500px'}} />
                 <h2>{productDetails.title}</h2>
                 <h4>{productDetails.description}</h4>
             </div>
