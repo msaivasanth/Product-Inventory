@@ -97,7 +97,17 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
       data.push(newItem)
       localStorage.setItem('products', JSON.stringify(data))
-      console.log(JSON.parse(localStorage.getItem('products') !))
+      
+
+      const response = await fetch(`${host}/products/add`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({title: title, description: desc})
+      })
+      const json = await response.json()
+      
     }
   }
   const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem };
