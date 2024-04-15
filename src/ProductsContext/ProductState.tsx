@@ -12,6 +12,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   let data = JSON.parse(localStorage.getItem('products') !) || []
 
@@ -81,12 +82,32 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       }
   }
 
-  const handleAddItem = async (title: string, desc: string) => {
+  const handleAddItem = async (title: string, desc: string, file: File) => {
     const res = await checkFn();
     if(res === null) return null 
     else {
-      const thumbnail = thumbnailImg;
-      const images = [Img]
+      setLoading(true)
+      let image = ''
+      if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+        const data = new FormData()
+        data.append('file', file!)
+        data.append('upload_preset', 'Product-Inventory')
+        data.append('cloud_name', "detuevaxw")
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/detuevaxw/image/upload', {
+            method: 'post',
+            body: data,
+        })
+        const json = await response.json()
+        image = json.url.toString()
+        setLoading(false)
+    }
+    else {
+        alert('please upload png or jpeg files or image not found.')
+    }
+
+      const thumbnail = image;
+      const images = [image]
       const newItem = {
         id: data.length + 1,
         title: title,
@@ -110,7 +131,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       
     }
   }
-  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem };
+  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading };
   return (
     <productContext.Provider value={value}>
       {props.children}
