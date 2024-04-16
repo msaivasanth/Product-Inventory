@@ -32,7 +32,7 @@ const HomePage = () => {
         <div className='row'>
         {products.map((product: any) => {
             return <>
-            <div key={product.id} className='col-md-3 my-3 text-center' style={{width: "20rem", maxHeight: "500px"}}>
+            <div key={product.id} className='col-md-3 my-3 text-center'>
                 <div className="card">
                     <img src={product.images[0]} className="card-img-top rounded-top" alt="..." style={{height: "300px"}}/>
                         <div className="card-body" >

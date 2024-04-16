@@ -18,9 +18,6 @@ const AddItem = () => {
             alert('Please Enter all the details.')
         }
         else {
-            console.log(title);
-            console.log(desc);
-            console.log(image);
             const res = await handleAddItem(title, desc, image)
             setTitle('');
             setDesc('');
