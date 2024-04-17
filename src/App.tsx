@@ -5,6 +5,7 @@ import ProductState from './ProductsContext/ProductState';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Login from './Components/Login';
 import ProductItem from './Components/ProductItem';
+import AddItem from './Components/AddItem';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<Login />} />
             <Route path='/product/:id' element={<ProductItem />} />
+            <Route path='/addItem' element={<AddItem />} />
           </Routes>
         </BrowserRouter>
       </div>

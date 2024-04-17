@@ -1,8 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <div>
+    <div className="sticky-top">
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
           <a className="navbar-brand" href="/">Product Inventory</a>
@@ -37,6 +38,9 @@ const Navbar = () => {
               <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
               <button className="btn btn-outline-success" type="submit">Search</button>
             </form>
+            <div>
+            <Link className="btn btn-primary mx-3" to="/addItem" role="button">Add Item</Link>
+            </div>
           </div>
         </div>
       </nav>
