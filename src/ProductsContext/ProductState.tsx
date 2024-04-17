@@ -131,7 +131,24 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       
     }
   }
-  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading };
+
+  const handleDelete = async (id: number) => {
+    const res = await checkFn();
+    if(res === null) return null
+    else {
+      data.splice(id, 1);
+      localStorage.setItem('products', JSON.stringify(data));
+
+      if(id != 0 || id < 100) {
+        const response = await fetch(`${host}/products/${id}`, {
+          method: 'DELETE' 
+        })
+        const json = await response.json()
+      }
+      
+    }
+  }
+  const value: any = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete };
   return (
     <productContext.Provider value={value}>
       {props.children}

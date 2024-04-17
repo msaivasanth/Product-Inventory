@@ -19,11 +19,16 @@ const AddItem = () => {
         }
         else {
             const res = await handleAddItem(title, desc, image)
-            setTitle('');
-            setDesc('');
-            setImage(null)
-            navigate('/')
-            alert('Your item is added, scroll down to view')
+            if(res == null) {
+                navigate('/login')
+            }
+            else {
+                setTitle('');
+                setDesc('');
+                setImage(null)
+                navigate('/')
+                alert('Your item is added, scroll down to view')
+            }
         }
     };
 
