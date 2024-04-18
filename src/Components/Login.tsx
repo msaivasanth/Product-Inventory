@@ -2,8 +2,19 @@ import React, { ReactEventHandler, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext'
 
+interface Login {
+    name: string;
+    token: string;
+}
+interface contextProps {
+    name: string,
+    password: string,
+    setName: (name: string) => void,
+    setPassword: (password: string) => void,
+    handleLogin: () => Promise<Login>
+}
 const Login = () => {
-    const {name, password, setName, setPassword, handleLogin}: any = useContext(productContext)
+    const {name, password, setName, setPassword, handleLogin}: contextProps = useContext(productContext)
     const navigate = useNavigate()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
