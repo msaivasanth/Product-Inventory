@@ -20,6 +20,7 @@ interface ProductContextValue {
   handleAddItem: (title: string, desc: string, file: File) => Promise<null | undefined>;
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
+  handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -34,6 +35,7 @@ const productContext = createContext<ProductContextValue>({
     handleAddItem: async () => null,
     loading: false,
     handleDelete: async () => null,
+    handleUpdate: async () => null
   });
 
 export default productContext;

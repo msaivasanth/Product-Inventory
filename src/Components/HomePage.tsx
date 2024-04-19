@@ -67,6 +67,7 @@ const HomePage = () => {
                     <Link to={`product/${ind + 1}`} className="btn btn-dark">Read More</Link>
 
                     <button className="fa-solid fa-trash-can bg-light ms-3 btn btn-light" onClick={() => handleDeleteItem(ind)}></button>
+                    <Link to={`/updateItem/${ind + 1}`} className="fa-solid fa-pen-to-square mx-2 btn btn-light"></Link>
                   </div>
                 </div>
               </div>
