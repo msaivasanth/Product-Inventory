@@ -2,13 +2,17 @@ import React, { useContext, useState } from 'react';
 import productContext from '../ProductsContext/productContext';
 import { useNavigate } from 'react-router-dom';
 
+interface AddItemProps {
+    handleAddItem: (title: string, desc: string, file: File) => Promise<null | undefined>;
+    loading: boolean;
+}
 const AddItem = () => {
     const [title, setTitle] = useState<string>("");
     const [desc, setDesc] = useState<string>("");
     const [image, setImage] = useState<File | null>(null);
 
     const context = useContext(productContext)
-    const { handleAddItem, loading}: any = context
+    const { handleAddItem, loading}: AddItemProps = context
 
     const navigate = useNavigate()
 
@@ -19,11 +23,16 @@ const AddItem = () => {
         }
         else {
             const res = await handleAddItem(title, desc, image)
-            setTitle('');
-            setDesc('');
-            setImage(null)
-            navigate('/')
-            alert('Your item is added, scroll down to view')
+            if(res === null) {
+                navigate('/login')
+            }
+            else {
+                setTitle('');
+                setDesc('');
+                setImage(null)
+                navigate('/')
+                alert('Your item is added, scroll down to view')
+            }
         }
     };
 

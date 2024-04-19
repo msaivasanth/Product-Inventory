@@ -1,29 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext'
 
-
+interface productDetailsProps {
+    title: string,
+    description: string,
+    images: string[],
+    thumbnail: string
+}
+interface contextProps {
+    handleGetDetails: (id: number) => Promise<productDetailsProps | null>;
+}
 const ProductItem = () => {
     const { id } = useParams()
 
     const context = useContext(productContext)
-    const { handleGetDetails }: any = context
+    const { handleGetDetails }: contextProps  = context
 
     const navigate = useNavigate()
 
-    interface productDetailsProps {
-        title: string,
-        description: string,
-        images: string[],
-        thumbnail: string
-    }
-    const [productDetails, setProductDetails] = useState<productDetailsProps | null>(null);
+    const [productDetails, setProductDetails] = useState<productDetailsProps>();
     useEffect(() => {
         getDetails()
     }, [])
 
     const getDetails = async () => {
-        const res = await handleGetDetails(id)
+        const res: productDetailsProps | null = await handleGetDetails(Number(id))
         if(res === null) {
             navigate('/login')
         }
@@ -32,13 +34,16 @@ const ProductItem = () => {
         }
     }
     if (!productDetails) {
-        return <div>Loading...</div>; // or any loading indicator
+        return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <h1 className='text-center'>Product Details...</h1>
-            <div className="text-center mt-5">
+            <div className="row mt-3 mx-3">
+            <Link to={'/'} className='btn btn-dark btn-lg col-1'>Go Back</Link>
+            <h1 className='text-center col-10'>Product Details...</h1>
+            </div>
+            <div className="text-center mt-4">
                 <img className='' src={`${productDetails.thumbnail}`} alt="" style={{ height: '500px', width: '500px'}} />
                 <h2>{productDetails.title}</h2>
                 <h4>{productDetails.description}</h4>
