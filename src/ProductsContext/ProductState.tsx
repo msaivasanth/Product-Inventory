@@ -132,24 +132,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     if (res === null) return null
     else {
       setLoading(true)
-      let image = ''
-      if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-        const data = new FormData()
-        data.append('file', file!)
-        data.append('upload_preset', 'Product-Inventory')
-        data.append('cloud_name', "detuevaxw")
-
-        const response = await fetch('https://api.cloudinary.com/v1_1/detuevaxw/image/upload', {
-          method: 'post',
-          body: data,
-        })
-        const json = await response.json()
-        image = json.url.toString()
-        setLoading(false)
-      }
-      else {
-        alert('please upload png or jpeg files or image not found.')
-      }
+      let image = await uploadImage(file)
 
       const thumbnail = image;
       const images = [image]
