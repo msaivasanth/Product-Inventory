@@ -213,7 +213,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
         })
         const json = await response.json()
       }
-
+      setLoading(false)
     }
   }
   const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate }
