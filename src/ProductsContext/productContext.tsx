@@ -21,6 +21,11 @@ interface ProductContextValue {
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
   handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
+  search: string;
+  setSearch: (search: string) => void
+  handleSearch: (search: string) => Promise<undefined | null>;
+  isSearch: boolean;
+  setIsSearch: (isSearch: boolean) => void
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -35,7 +40,12 @@ const productContext = createContext<ProductContextValue>({
     handleAddItem: async () => null,
     loading: false,
     handleDelete: async () => null,
-    handleUpdate: async () => null
+    handleUpdate: async () => null,
+    search: '',
+    setSearch: () => {},
+    handleSearch: async () => null,
+    isSearch: false,
+    setIsSearch: () => {}
   });
 
 export default productContext;

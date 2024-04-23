@@ -2,6 +2,7 @@ import React, { FC, ReactNode, useState } from 'react'
 import productContext from './productContext'
 import thumbnailImg from '../images/dummy.jpg'
 import Img from '../images/image.webp'
+import { Search } from 'react-router-dom';
 
 interface ProductStateProps {
   children: ReactNode;
@@ -28,6 +29,11 @@ interface ProductContextValue {
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
   handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
+  search: string;
+  setSearch: (search: string) => void;
+  handleSearch: (search: string) => Promise<undefined | null>;
+  isSearch: boolean;
+  setIsSearch: (isSearch: boolean) => void
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -37,6 +43,8 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const [name, setName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<string>('')
+  const [isSearch, setIsSearch] = useState<boolean>(false)
 
   let data = JSON.parse(localStorage.getItem('products')!) || []
 
@@ -114,16 +122,27 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     else {
       if (id > 0 && id < 100) { const response = await fetch(`${host}/products/${id}`) }
       // const json = await response.json();
-
       let json: Product = { id, title: "", description: "", images: [], thumbnail: "" };
-      for (let i = 0; i < data.length; i++) {
-        const pro = data[i]
-        if (i === id - 1) {
-          json = pro;
-          break;
+      if(isSearch) {
+        for(let i = 0; i < products.length; i++) {
+          const pro = products[i];
+          if(i === id - 1) {
+            json = pro;
+            break;
+          }
         }
+        return json
       }
-      return json
+      else {
+        for (let i = 0; i < data.length; i++) {
+          const pro = data[i]
+          if (i === id - 1) {
+            json = pro;
+            break;
+          }
+        }
+        return json
+      }
     }
   }
 
@@ -216,7 +235,26 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       setLoading(false)
     }
   }
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate }
+
+  const handleSearch = async (search: string) => {
+    const res = await checkFn();
+    if (res === null) return null
+    else {
+      setLoading(true)
+      let result = data.filter((product: Product) => {
+        if(product.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 || product.description.toLowerCase().indexOf(search.toLowerCase()) !== -1) return product;
+      })
+      setProducts(result)
+      console.log(result)
+  
+      const resp = await fetch(`${host}/products/search?q=${search}`)
+      const json = resp.json();
+      setLoading(false)
+      setIsSearch(true)
+    }
+  }
+
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch }
   return (
     <productContext.Provider value={value}>
       {props.children}
