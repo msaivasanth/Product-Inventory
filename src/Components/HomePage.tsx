@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import productContext from '../ProductsContext/productContext'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
@@ -16,22 +16,31 @@ interface HomeProps {
   products: productProps[] | undefined;
   getProducts: () => Promise<null | undefined>;
   handleDelete: (id: number) => Promise<null | undefined>;
+  search: string;
+  isSearch: boolean;
+  setIsSearch: (isSearch: boolean) => void
 }
 const HomePage = () => {
   const context = useContext(productContext)
-  const { products, getProducts, handleDelete }: HomeProps = context
+  const { products, getProducts, handleDelete, search, isSearch, setIsSearch }: HomeProps = context
   const navigate = useNavigate()
-
-
+  const [dSearch, SetDSearch] = useState<string>('')
+  
+  
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      getProductsFn()
+    if (!localStorage.getItem('token')) {
+      navigate('/login')
     }
     else {
-      navigate('/login')
+      if(search === '') {
+        getProductsFn()
+        setIsSearch(false)
+      }
+      else SetDSearch(search)
     }
     //eslint-disable-next-line
   }, [products])
+
 
   const getProductsFn = async () => {
     const res = await getProducts()
@@ -54,6 +63,7 @@ const HomePage = () => {
       <ScrollToTop />
       <Navbar />
       <div className='container mt-3'>
+        {isSearch && <h2>{`Search Result for '${dSearch}'`}</h2>}
         <div className='row'>
           {products && products.map((product: productProps, ind: number) => {
             return <>
@@ -63,11 +73,11 @@ const HomePage = () => {
                   <div className="card-body" >
                     <h5 className="card-title">{product.title.slice(0, 20) + (product.title.length > 20 ? "..." : "")}</h5>
                     <p className="card-text">{product.description.slice(0, 20) + (product.description.length > 20 ? "..." : "")}</p>
-
+                  
                     <Link to={`product/${ind + 1}`} className="btn btn-dark">Read More</Link>
 
-                    <button className="fa-solid fa-trash-can bg-light ms-3 btn btn-light" onClick={() => handleDeleteItem(ind)}></button>
-                    <Link to={`/updateItem/${ind + 1}`} className="fa-solid fa-pen-to-square mx-2 btn btn-light"></Link>
+                    {isSearch === false && <><button className="fa-solid fa-trash-can bg-light ms-3 btn btn-light" onClick={() => handleDeleteItem(ind)}></button>
+                    <Link to={`/updateItem/${ind + 1}`} className="fa-solid fa-pen-to-square mx-2 btn btn-light"></Link></>}
                   </div>
                 </div>
               </div>
