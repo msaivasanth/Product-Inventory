@@ -34,11 +34,27 @@ const Search = () => {
             if (res === null) navigate('/login')
         }
     }
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value)
-        const value1 = e.target.value;
+    
+    const myDebounce = (cb: Function, d: number) => {
+        let timer: NodeJS.Timeout;
+    
+        return function(...args: any) {
+          if(timer) clearTimeout(timer)
+    
+          timer = setTimeout(() => {
+            cb(...args)
+          }, d);
+        }
+      }
+      
+      const debounceFn = myDebounce((value1: string) => {
         const suggestions = searchSuggestions(value1)
         setSugg(suggestions?.slice(0, 10))
+      }, 800)
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value)
+        const value1: string = e.target.value;
+        debounceFn(value1)
     }
     return (
         <>
@@ -48,13 +64,13 @@ const Search = () => {
                         <input className="form-control me-2"  placeholder="Search" aria-label="Search" onChange={(e) => handleChange(e)} data-bs-toggle="dropdown" value={search} />
 
                         <ul className="dropdown-menu">
-                            {!search && <div className='text-center'>Enter something...</div>}
+                            {/* {!search && <div className='text-center'>Enter something...</div>} */}
                             {sugg && sugg?.map((product: Product) => {
                                 return <li><a className="dropdown-item" onClick={() => {setSearch(product.title)}} href='#'>{product.title}</a></li>
                             })}
                         </ul>
                     </div>
-                    <button className="btn btn-outline-success" type="submit">Search</button>
+                    <button className="btn btn-outline-success ms-2" type="submit">Search</button>
                 </form>
             </div>
         </>
