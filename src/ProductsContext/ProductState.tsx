@@ -34,6 +34,7 @@ interface ProductContextValue {
   handleSearch: (search: string) => Promise<undefined | null>;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
+  searchSuggestions: (search: string) => Product[] | undefined
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -48,6 +49,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   let data = JSON.parse(localStorage.getItem('products')!) || []
 
+  // To handle the login functionality.
   const handleLogin = async () => {
     const response = await fetch(`${host}/auth/login`, {
       method: 'POST',
@@ -61,6 +63,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     return json
   }
 
+  // To upload an image to cloud
   const uploadImage = async (file: File) => {
     let image = ''
     if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
@@ -83,6 +86,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     return image;
   }
 
+  // To validate the token status expired or not.
   const checkFn = async () => {
     const check = await fetch(`${host}/auth/me`, {
       method: 'GET',
@@ -98,7 +102,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
-
+ // To fetch all the products.
   const getProducts = async () => {
     const res = await checkFn();
     if (res === null) return null
@@ -115,7 +119,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
-
+ // To fetch details of a product.
   const handleGetDetails = async (id: number) => {
     const res = await checkFn();
     if (res === null) return null
@@ -146,6 +150,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
+  // To add a new proudct Item.
   const handleAddItem = async (title: string, desc: string, file: File) => {
     const res = await checkFn();
     if (res === null) return null
@@ -179,6 +184,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
+  // To delete an existing product.
   const handleDelete = async (id: number) => {
     const res = await checkFn();
     if (res === null) return null
@@ -196,6 +202,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
+  // To update an existing product.
   const handleUpdate = async (id: number, title: string, desc: string, file: File | null) => {
     const res = await checkFn();
     if (res === null) return null
@@ -236,6 +243,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
+  // To fetch the products based on search value.
   const handleSearch = async (search: string) => {
     const res = await checkFn();
     if (res === null) return null
@@ -245,7 +253,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
         if(product.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 || product.description.toLowerCase().indexOf(search.toLowerCase()) !== -1) return product;
       })
       setProducts(result)
-      console.log(result)
+      
   
       const resp = await fetch(`${host}/products/search?q=${search}`)
       const json = resp.json();
@@ -254,7 +262,16 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch }
+  // To give suggestions to enterd value in search.
+  const searchSuggestions = (search: string) => {
+    const filteredResult = data.filter((product: Product) => {
+      if(search && product.title.toLowerCase().includes(search.toLowerCase())) {
+        return product.title
+      }
+    })
+    return filteredResult;
+  }
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions }
   return (
     <productContext.Provider value={value}>
       {props.children}

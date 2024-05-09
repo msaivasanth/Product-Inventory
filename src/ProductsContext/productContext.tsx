@@ -26,6 +26,7 @@ interface ProductContextValue {
   handleSearch: (search: string) => Promise<undefined | null>;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
+  searchSuggestions: (search: string) => Product[] | undefined
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -45,7 +46,8 @@ const productContext = createContext<ProductContextValue>({
     setSearch: () => {},
     handleSearch: async () => null,
     isSearch: false,
-    setIsSearch: () => {}
+    setIsSearch: () => {},
+    searchSuggestions: () => undefined
   });
 
 export default productContext;
