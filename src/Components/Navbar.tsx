@@ -1,11 +1,18 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import productContext from '../ProductsContext/productContext'
+
 import Search from './Search'
 
 
 const Navbar = () => {
   
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login')
+    alert('LoggedOut successfully!')
+  }
 
   return (
     <div className="sticky-top">
@@ -42,6 +49,7 @@ const Navbar = () => {
             <Search />
             <div>
             <Link className="btn btn-primary mx-3" to="/addItem" role="button">Add Item</Link>
+            <button className="btn btn-danger" onClick={handleLogout}>LogOut</button>
             </div>
           </div>
         </div>
