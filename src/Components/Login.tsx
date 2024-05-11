@@ -32,6 +32,7 @@ const Login = () => {
             if(resp) {
                 localStorage.setItem('token', resp.token)
                 navigate('/')
+                alert('Logged in successfully!')
             }
             
         }
