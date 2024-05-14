@@ -1,12 +1,29 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import Search from './Search'
+import productContext from '../ProductsContext/productContext';
 
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: string;
+  images: string[];
+}
+
+interface contextProps {
+  setSelected: (selected: boolean) => void,
+  selectedCategories: (cat: string) => Promise<Product[] | undefined>,
+  selected: boolean,
+  
+}
 const Navbar = () => {
   
   const navigate = useNavigate();
+  const context = useContext(productContext)
+  const { selectedCategories, selected, setSelected }: contextProps = context
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -14,6 +31,14 @@ const Navbar = () => {
     alert('LoggedOut successfully!')
   }
 
+  const handleSelect = async (value: string) => {
+      let res = await selectedCategories(value)
+      if(res === null) navigate('/login')
+      else {setSelected(true); alert(`Products related to ${value}`);}
+      
+  }
+
+  
   return (
     <div className="sticky-top">
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -35,11 +60,11 @@ const Navbar = () => {
                   Categories
                 </button>
                 <ul className="dropdown-menu">
-                  <li><a className="dropdown-item" href="#">smartphones</a></li>
-                  <li><a className="dropdown-item" href="#">laptops</a></li>
-                  <li><a className="dropdown-item" href="#">fragrances</a></li>
-                  <li><a className="dropdown-item" href="#">groceries</a></li>
-                  <li><a className="dropdown-item" href="#">furniture</a></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("smartphones")}>smartphones</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("laptops")}>laptops</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("fragrances")}>fragrances</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("groceries")}>groceries</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("furniture")}>furniture</button></li>
                   {/* <li><hr className="dropdown-divider" /></li>
             <li><a className="dropdown-item" href="#">Something else here</a></li> */}
                 </ul>
@@ -55,6 +80,7 @@ const Navbar = () => {
         </div>
       </nav>
     </div>
+
   )
 }
 
