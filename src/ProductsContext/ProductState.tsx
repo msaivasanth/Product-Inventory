@@ -258,7 +258,6 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
         if(product.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 || product.description.toLowerCase().indexOf(search.toLowerCase()) !== -1) return product;
       })
       setProducts(result)
-      console.log(products)
       
   
       const resp = await fetch(`${host}/products/search?q=${search}`)
