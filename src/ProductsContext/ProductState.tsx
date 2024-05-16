@@ -14,6 +14,7 @@ interface Product {
   description: string;
   thumbnail: string;
   images: string[];
+  category: string
 }
 
 interface ProductContextValue {
@@ -34,7 +35,10 @@ interface ProductContextValue {
   handleSearch: (search: string) => Promise<undefined | null>;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
-  searchSuggestions: (search: string) => Product[] | undefined
+  searchSuggestions: (search: string) => Promise<Product[] | undefined>
+  selected: boolean;
+  setSelected: (selected: boolean) => void;
+  selectedCategories: (cat: string) => Promise<Product[] | undefined>
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -46,6 +50,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [search, setSearch] = useState<string>('')
   const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [selected, setSelected] = useState<boolean>(false)
 
   let data = JSON.parse(localStorage.getItem('products')!) || []
 
@@ -126,7 +131,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     else {
       if (id > 0 && id < 100) { const response = await fetch(`${host}/products/${id}`) }
       // const json = await response.json();
-      let json: Product = { id, title: "", description: "", images: [], thumbnail: "" };
+      let json: Product = { id, title: "", description: "", images: [], thumbnail: "" , category: ""};
       if(isSearch) {
         for(let i = 0; i < products.length; i++) {
           const pro = products[i];
@@ -263,15 +268,35 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   // To give suggestions to enterd value in search.
-  const searchSuggestions = (search: string) => {
-    const filteredResult = data.filter((product: Product) => {
-      if(search && product.title.toLowerCase().includes(search.toLowerCase())) {
-        return product.title
-      }
-    })
-    return filteredResult;
+  const searchSuggestions = async (search: string) => {
+    const res = await checkFn();
+    if (res === null) return null
+    else {
+      const filteredResult = data.filter((product: Product) => {
+        if(search && product.title.toLowerCase().includes(search.toLowerCase())) {
+          return product.title
+        }
+      })
+      return filteredResult;
+    }
   }
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions }
+
+  const selectedCategories = async (cat: string) => {
+    setSelected(true)
+    const res = await checkFn();
+    if (res === null) return null
+    else {
+      let res = data.filter((product: Product) => {
+        return cat == product.category;
+      })
+  
+      // console.log(res)
+      setProducts(res);
+      setSelected(true)
+      return res
+    }
+  }
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories }
   return (
     <productContext.Provider value={value}>
       {props.children}

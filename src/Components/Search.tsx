@@ -6,7 +6,7 @@ interface contextProps {
     search: string,
     setSearch: (search: string) => void,
     handleSearch: (search: string) => Promise<null | undefined>
-    searchSuggestions: (search: string) => Product[] | undefined
+    searchSuggestions: (search: string) => Promise<Product[] | undefined>
 }
 
 interface Product {
@@ -47,9 +47,10 @@ const Search = () => {
         }
       }
       
-      const debounceFn = myDebounce((value1: string) => {
-        const suggestions = searchSuggestions(value1)
-        setSugg(suggestions?.slice(0, 10))
+      const debounceFn = myDebounce(async (value1: string) => {
+        const suggestions = await searchSuggestions(value1)
+        if(suggestions == null) navigate('/login')
+        else setSugg(suggestions?.slice(0, 10))
       }, 800)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

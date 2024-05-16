@@ -9,7 +9,7 @@ interface productProps {
   title: string,
   description: string,
   images: string[],
-  thumbnail: string
+  thumbnail: string;
 }
 
 interface HomeProps {
@@ -19,10 +19,11 @@ interface HomeProps {
   search: string;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
+  selected: boolean  
 }
 const HomePage = () => {
   const context = useContext(productContext)
-  const { products, getProducts, handleDelete, search, isSearch, setIsSearch }: HomeProps = context
+  const { products, getProducts, handleDelete, search, isSearch, setIsSearch, selected }: HomeProps = context
   const navigate = useNavigate()
   const [dSearch, SetDSearch] = useState<string>('')
   
@@ -32,14 +33,15 @@ const HomePage = () => {
       navigate('/login')
     }
     else {
-      if(search === '') {
-        getProductsFn()
-        setIsSearch(false)
+      if(search !== '') {
+        SetDSearch(search)
       }
-      else SetDSearch(search)
+      else if (selected === false) {
+        getProductsFn()
+      }
     }
     //eslint-disable-next-line
-  }, [products])
+  }, [products, selected])
 
 
   const getProductsFn = async () => {
@@ -63,6 +65,7 @@ const HomePage = () => {
       <ScrollToTop />
       <Navbar />
       <div className='container mt-3'>
+        
         {isSearch && <h2>{`Search Result for '${dSearch}'`}</h2>}
         <div className='row'>
           {products && products.map((product: productProps, ind: number) => {
