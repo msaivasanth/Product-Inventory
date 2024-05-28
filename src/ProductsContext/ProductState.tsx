@@ -56,7 +56,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   // To handle the login functionality.
   const handleLogin = async () => {
-    const response = await fetch(`${host}/auth/login`, {
+    const response = await fetch(`http://localhost:5103/api/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': "application/json"
