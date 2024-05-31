@@ -56,7 +56,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   // To handle the login functionality.
   const handleLogin = async () => {
-    const response = await fetch(`${host}/auth/login`, {
+    const response = await fetch(`http://localhost:5103/api/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': "application/json"
@@ -93,14 +93,14 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   // To validate the token status expired or not.
   const checkFn = async () => {
-    const check = await fetch(`${host}/auth/me`, {
+    const check = await fetch(`http://localhost:5103/api/user/me`, {
       method: 'GET',
       headers: {
         "Authorization": localStorage.getItem('token')!
       }
     })
     const checkRes = await check.json()
-    if (!checkRes.id) {
+    if (checkRes.message !== "Token is valid") {
       localStorage.removeItem('token')
       // navigate('/login')
       return null
