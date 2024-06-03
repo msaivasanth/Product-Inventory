@@ -112,15 +112,9 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      if (data.length === 0) {
-        const response = await fetch(`${host}/products?limit=0`);
-        const json = await response.json();
-        localStorage.setItem('products', JSON.stringify(json.products))
-        setProducts(json.products)
-      }
-      else {
-        setProducts(data)
-      }
+      const response = await fetch(`http://localhost:5103/api/products`);
+      const json = await response.json();
+      setProducts(json);
     }
   }
 

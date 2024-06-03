@@ -13,6 +13,7 @@ export function TimeoutProvider({ children }: { children: ReactNode }) {
 
       timeoutRef.current = setTimeout(() => {
         // Redirect to a different route when the timeout occurs
+        localStorage.removeItem('token');
         navigate("/login");
         alert("Session expired")
       }, 60000);
