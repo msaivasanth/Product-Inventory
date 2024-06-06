@@ -26,7 +26,7 @@ interface ProductContextValue {
   password: string;
   handleLogin: () => Promise<any>;
   handleGetDetails: (id: number) => Promise<{} | null>;
-  handleAddItem: (title: string, desc: string, file: File) => Promise<null | undefined>;
+  handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
   handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
@@ -150,36 +150,36 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   // To add a new proudct Item.
-  const handleAddItem = async (title: string, desc: string, file: File) => {
+  const handleAddItem = async (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => {
     const res = await checkFn();
     if (res === null) return null
     else {
       setLoading(true)
-      let image = await uploadImage(file)
+      let image = await uploadImage(file);
+      let thumb = await uploadImage(thumbnail)
 
-      const thumbnail = image;
       const images = [image]
       const newItem = {
-        id: data.length + 1,
         title: title,
         description: desc,
-        thumbnail: thumbnail,
+        price: parseInt(price),
+        rating: parseFloat(rating),
+        brand: brand,
+        category: category,
+        thumbnail: thumb,
         images: images
       }
-
-      data.push(newItem)
-      localStorage.setItem('products', JSON.stringify(data))
-
-
-      const response = await fetch(`${host}/products/add`, {
+      
+      const response = await fetch(`http://localhost:5103/api/products/addProduct`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ title: title, description: desc })
+        body: JSON.stringify(newItem)
       })
       const json = await response.json()
-
+      console.log(json)
+      
     }
   }
 

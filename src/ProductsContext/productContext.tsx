@@ -17,7 +17,7 @@ interface ProductContextValue {
   password: string;
   handleLogin: () => Promise<any>;
   handleGetDetails: (id: number) => Promise<any | null>;
-  handleAddItem: (title: string, desc: string, file: File) => Promise<null | undefined>;
+  handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
   handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;

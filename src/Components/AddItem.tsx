@@ -3,13 +3,18 @@ import productContext from '../ProductsContext/productContext';
 import { useNavigate } from 'react-router-dom';
 
 interface AddItemProps {
-    handleAddItem: (title: string, desc: string, file: File) => Promise<null | undefined>;
+    handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
     loading: boolean;
 }
 const AddItem = () => {
     const [title, setTitle] = useState<string>("");
     const [desc, setDesc] = useState<string>("");
     const [image, setImage] = useState<File | null>(null);
+    const [thumbnail, setThumbnail] = useState<File | null>(null);
+    const [price, setPrice] = useState<string>("");
+    const [rating, setRating] = useState<string>("");
+    const [brand, setBrand] = useState<string>("");
+    const [category, setCategory] = useState<string>("");
 
     const context = useContext(productContext)
     const { handleAddItem, loading}: AddItemProps = context
@@ -18,11 +23,11 @@ const AddItem = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(!title || !desc || !image) {
+        if(!title || !desc || !image || !price || !rating || !thumbnail || !brand || !category) {
             alert('Please Enter all the details.')
         }
         else {
-            const res = await handleAddItem(title, desc, image)
+            const res = await handleAddItem(title, desc, price, rating, brand, category, thumbnail, image)
             if(res === null) {
                 navigate('/login')
             }
@@ -43,9 +48,16 @@ const AddItem = () => {
         }
     };
 
+    const handleFileChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if(file) {
+            setThumbnail(file)
+        }
+    };
+
     if (loading) return <div>Loading....</div>
     return (
-        <div className='container border border-black border-2 rounded mt-5 p-4'>
+        <div className='container border border-black border-2 rounded my-5 p-4'>
             <h1 className='text-center m-2'>Add new product item.</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -56,8 +68,33 @@ const AddItem = () => {
                     <label htmlFor="exampleFormControlTextarea1" className="form-label fs-3">Product Description</label>
                     <textarea className="form-control form-control-lg border-black" id="exampleFormControlTextarea1" rows={3} onChange={(e) => setDesc(e.target.value)} value={desc} required></textarea>
                 </div>
+               
+                <div className="row">
+                    <div className="col-6 mb-3">
+                        <label htmlFor="price" className="form-label fs-3">Price</label>
+                        <input type="string" className="form-control form-control-lg  border-black" id="price" aria-describedby="emailHelp" value={price} onChange={(e) => setPrice(e.target.value)} required/>
+                    </div>
+                    <div className="col-6 mb-3">
+                        <label htmlFor="rating" className="form-label fs-3">Rating</label>
+                        <input type="string" step={0.01} className="form-control form-control-lg  border-black" id="rating" aria-describedby="emailHelp" value={rating} onChange={(e) => setRating(e.target.value)}  required/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-6 mb-3">
+                        <label htmlFor="price" className="form-label fs-3">Brand</label>
+                        <input type="string" className="form-control form-control-lg  border-black" id="price" aria-describedby="emailHelp" value={brand} onChange={(e) => setBrand(e.target.value)} required/>
+                    </div>
+                    <div className="col-6 mb-3">
+                        <label htmlFor="rating" className="form-label fs-3">Category</label>
+                        <input type="string" step={0.01} className="form-control form-control-lg  border-black" id="rating" aria-describedby="emailHelp" value={category} onChange={(e) => setCategory(e.target.value)}  required/>
+                    </div>
+                </div>
                 <div className="mb-3">
-                <label htmlFor="exampleFormControlTextarea1" className="form-label fs-3">Upload Product Image</label>
+                <label htmlFor="exampleFormControlTextarea1" className="form-label fs-3">Upload Thumbnail Image</label>
+                    <input type="file" name="" id="" className='form-control form-control-lg border-black' onChange={handleFileChange2} required/>
+                </div>
+                <div className="mb-3">
+                <label htmlFor="exampleFormControlTextarea2" className="form-label fs-3">Upload Product Image</label>
                     <input type="file" name="" id="" className='form-control form-control-lg border-black' onChange={handleFileChange} required/>
                 </div>
                 <div className='d-flex justify-content-between mt-5'>

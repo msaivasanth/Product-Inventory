@@ -72,7 +72,7 @@ const HomePage = () => {
             return <>
               <div key={product.id} className='col-md-3 my-3 text-center'>
                 <div className="card">
-                  <img src={product.images[0]} className="card-img-top rounded-top" alt="..." style={{ height: "300px" }} />
+                  <img src={product.thumbnail} className="card-img-top rounded-top" alt="..." style={{ height: "300px" }} />
                   <div className="card-body" >
                     <h5 className="card-title">{product.title.slice(0, 20) + (product.title.length > 20 ? "..." : "")}</h5>
                     <p className="card-text">{product.description.slice(0, 20) + (product.description.length > 20 ? "..." : "")}</p>
