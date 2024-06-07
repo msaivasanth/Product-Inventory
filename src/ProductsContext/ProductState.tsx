@@ -178,7 +178,6 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
         body: JSON.stringify(newItem)
       })
       const json = await response.json()
-      console.log(json)
       
     }
   }
