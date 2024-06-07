@@ -46,8 +46,11 @@ const HomePage = () => {
 
   const getProductsFn = async () => {
     const res = await getProducts()
-    if (res === null) navigate('/login')
+    if (res === null) {
+      alert("Session expired! Please login again.")
+      navigate('/login')
     }
+  }
   
   const handleDeleteItem = async (id: number) => {
     const del = confirm('Are you sure want to delete')
@@ -77,7 +80,7 @@ const HomePage = () => {
                     <h5 className="card-title">{product.title.slice(0, 20) + (product.title.length > 20 ? "..." : "")}</h5>
                     <p className="card-text">{product.description.slice(0, 20) + (product.description.length > 20 ? "..." : "")}</p>
                   
-                    <Link to={`product/${ind + 1}`} className="btn btn-dark">Read More</Link>
+                    <Link to={`product/${product.id}`} className="btn btn-dark">Read More</Link>
 
                     {isSearch === false && <><button className="fa-solid fa-trash-can bg-light ms-3 btn btn-light" onClick={() => handleDeleteItem(ind)}></button>
                     <Link to={`/updateItem/${ind + 1}`} className="fa-solid fa-pen-to-square mx-2 btn btn-light"></Link></>}

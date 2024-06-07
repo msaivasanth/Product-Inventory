@@ -123,29 +123,34 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      if (id > 0 && id < 100) { const response = await fetch(`${host}/products/${id}`) }
+      // if (id > 0 && id < 100) { const response = await fetch(`${host}/products/${id}`) }
       // const json = await response.json();
-      let json: Product = { id, title: "", description: "", images: [], thumbnail: "" , category: ""};
-      if(isSearch) {
-        for(let i = 0; i < products.length; i++) {
-          const pro = products[i];
-          if(i === id - 1) {
-            json = pro;
-            break;
-          }
-        }
-        return json
-      }
-      else {
-        for (let i = 0; i < data.length; i++) {
-          const pro = data[i]
-          if (i === id - 1) {
-            json = pro;
-            break;
-          }
-        }
-        return json
-      }
+      // let json: Product = { id, title: "", description: "", images: [], thumbnail: "" , category: ""};
+      // if(isSearch) {
+      //   for(let i = 0; i < products.length; i++) {
+      //     const pro = products[i];
+      //     if(i === id - 1) {
+      //       json = pro;
+      //       break;
+      //     }
+      //   }
+      //   return json
+      // }
+      // else {
+      //   for (let i = 0; i < data.length; i++) {
+      //     const pro = data[i]
+      //     if (i === id - 1) {
+      //       json = pro;
+      //       break;
+      //     }
+      //   }
+      //   return json
+      // }
+
+      const response = await fetch(`http://localhost:5103/api/products/${id}`);
+      const json = response.json();
+      return json;
+
     }
   }
 

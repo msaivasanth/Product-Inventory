@@ -40,6 +40,7 @@ const UpdateItem = () => {
         setLoading(true)
         const res: productDetailsProps | null = await handleGetDetails(Number(id))
         if(res === null) {
+            alert("Session expired! Please login again.")
             navigate('/login')
         }
         else {
