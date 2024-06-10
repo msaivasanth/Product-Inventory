@@ -29,6 +29,7 @@ const AddItem = () => {
         else {
             const res = await handleAddItem(title, desc, price, rating, brand, category, thumbnail, image)
             if(res === null) {
+                alert("Session expired! Please login again.")
                 navigate('/login')
             }
             else {

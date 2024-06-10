@@ -31,7 +31,10 @@ const Search = () => {
         }
         else {
             const res = await handleSearch(search);
-            if (res === null) navigate('/login')
+            if (res === null) {
+                alert("Session expired! Please login again.")
+                navigate('/login')
+            }
         }
     }
     
