@@ -169,7 +169,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      const response = await fetch(`${azure_api}/products/deleteProduct/${id}`);
+      const response = await fetch(`${azure_api}/api/products/deleteProduct/${id}`);
       const json = response.json();
       return json;
     }
