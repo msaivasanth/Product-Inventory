@@ -1,6 +1,7 @@
 import React, { ReactEventHandler, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext'
+import Loader from './Loader';
 
 interface Login {
     name: string;
@@ -14,6 +15,7 @@ interface contextProps {
     handleLogin: () => Promise<Login>
 }
 const Login = () => {
+    const [loading, setLoading] = useState<boolean>(false)
     const {name, password, setName, setPassword, handleLogin}: contextProps = useContext(productContext)
     const navigate = useNavigate()
 
@@ -22,7 +24,7 @@ const Login = () => {
             alert('Please enter all details correctly')
         }
         else {
-
+            setLoading(true);
             e.preventDefault()
             setName('')
             setPassword('')
@@ -38,8 +40,12 @@ const Login = () => {
             else {
                 alert("Invalid credentials!");
             }
-            
+            setLoading(false);
         }
+    }
+
+    if(loading) {
+        return <Loader />
     }
     return (
         <div className='container mt-4 border border-black rounded p-5'>

@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import productContext from '../ProductsContext/productContext';
 import { useNavigate } from 'react-router-dom';
+import Loader from './Loader';
 
 interface AddItemProps {
     handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
@@ -56,7 +57,7 @@ const AddItem = () => {
         }
     };
 
-    if (loading) return <div>Loading....</div>
+    if (loading) return <Loader />
     return (
         <div className='container border border-black border-2 rounded my-5 p-4'>
             <h1 className='text-center m-2'>Add new product item.</h1>
