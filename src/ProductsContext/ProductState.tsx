@@ -43,6 +43,7 @@ interface ProductContextValue {
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const host = 'https://dummyjson.com'
+  const azure_api = "https://productinventorybackend.azurewebsites.net"
   const [products, setProducts] = useState<Product[]>([])
 
   const [name, setName] = useState<string>('')
@@ -56,7 +57,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   // To handle the login functionality.
   const handleLogin = async () => {
-    const response = await fetch(`http://localhost:5103/api/user/login`, {
+    const response = await fetch(`${azure_api}/api/user/login`, {
       method: 'POST',
       headers: {
         'Content-Type': "application/json"
@@ -93,7 +94,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
 
   // To validate the token status expired or not.
   const checkFn = async () => {
-    const check = await fetch(`http://localhost:5103/api/user/me`, {
+    const check = await fetch(`${azure_api}/api/user/me`, {
       method: 'GET',
       headers: {
         "Authorization": localStorage.getItem('token')!
@@ -112,7 +113,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      const response = await fetch(`http://localhost:5103/api/products`);
+      const response = await fetch(`${azure_api}/api/products`);
       const json = await response.json();
       setProducts(json);
     }
@@ -123,7 +124,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      const response = await fetch(`http://localhost:5103/api/products/${id}`);
+      const response = await fetch(`${azure_api}/api/products/${id}`);
       const json = response.json();
       return json;
 
@@ -151,7 +152,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
         images: images
       }
       
-      const response = await fetch(`http://localhost:5103/api/products/addProduct`, {
+      const response = await fetch(`${azure_api}/api/products/addProduct`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
@@ -168,16 +169,14 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      data.splice(id, 1);
-      localStorage.setItem('products', JSON.stringify(data));
-
-      if (id != 0 || id < 100) {
-        const response = await fetch(`${host}/products/${id}`, {
-          method: 'DELETE'
-        })
-        const json = await response.json()
-      }
-
+      const response = await fetch(`${azure_api}/api/products/deleteProduct/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      const json = response.json();
+      return json;
     }
   }
 
