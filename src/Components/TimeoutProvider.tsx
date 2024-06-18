@@ -7,34 +7,41 @@ export function TimeoutProvider({ children }: { children: ReactNode }) {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    if (exemptedRoutes.includes(location.pathname)) return;
+
+    if (exemptedRoutes.includes(location.pathname)) return ;
+
     const handleWindowEvents = () => {
-      clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
       timeoutRef.current = setTimeout(() => {
-        // Redirect to a different route when the timeout occurs
         localStorage.removeItem('token');
         navigate("/login");
-        alert("Session expired! Please login again.")
-      }, 60000);
+        alert("Session expired! Please login again.");
+      }, 60000); 
     };
 
-    // listen for specific window events to ensure the user is still active
+    // Listen for specific window events to ensure the user is still active
     window.addEventListener("mousemove", handleWindowEvents);
     window.addEventListener("keydown", handleWindowEvents);
     window.addEventListener("click", handleWindowEvents);
     window.addEventListener("scroll", handleWindowEvents);
 
+    // Trigger the initial timeout setup
     handleWindowEvents();
 
-    // cleanup function
+    // Cleanup function 
     return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
       window.removeEventListener("mousemove", handleWindowEvents);
       window.removeEventListener("keydown", handleWindowEvents);
       window.removeEventListener("click", handleWindowEvents);
       window.removeEventListener("scroll", handleWindowEvents);
     };
-  }, [navigate, location.pathname]);
+  }, [location.pathname, navigate]);
 
   return children;
 }

@@ -54,7 +54,7 @@ const UpdateItem = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const val = confirm('Are you sure to updated.')
+        const val = confirm('Are you sure want to update ?')
         if(val === true) {
             setLoading(true)
             const res = await handleUpdate(Number(id), title, description, image !);
