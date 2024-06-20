@@ -19,7 +19,7 @@ export function TimeoutProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('token');
         navigate("/login");
         alert("Session expired! Please login again.");
-      }, 60000); 
+      }, 600000); 
     };
 
     // Listen for specific window events to ensure the user is still active
