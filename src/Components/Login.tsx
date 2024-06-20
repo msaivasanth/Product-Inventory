@@ -32,14 +32,16 @@ const Login = () => {
             const resp = await handleLogin()
             
             if(resp !== null) {
-                localStorage.setItem('token', resp.token)
-                navigate('/')
-                alert('Logged in successfully!')
+                if(resp.token !== undefined) {
+                    localStorage.setItem('token', resp.token)
+                    navigate('/')
+                    alert('Logged in successfully!')
+                }
+                else {
+                    alert("Invalid credentials!")
+                }
             }
 
-            else {
-                alert("Invalid credentials!");
-            }
             setLoading(false);
         }
     }
