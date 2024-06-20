@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext'
+import Loader from './Loader';
 
 interface productDetailsProps {
     title: string,
@@ -39,7 +40,7 @@ const ProductItem = () => {
         }
     }
     if (!productDetails) {
-        return <div>Loading...</div>;
+        return <Loader />;
     }
 
     return (

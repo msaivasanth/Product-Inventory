@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext';
+import Loader from './Loader';
 
 interface productDetailsProps {
     title: string,
@@ -53,7 +54,7 @@ const UpdateItem = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const val = confirm('Are you sure to updated.')
+        const val = confirm('Are you sure want to update ?')
         if(val === true) {
             setLoading(true)
             const res = await handleUpdate(Number(id), title, description, image !);
@@ -70,7 +71,7 @@ const UpdateItem = () => {
 
     }
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
     }
     return (
         <div>
