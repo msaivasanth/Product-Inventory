@@ -20,7 +20,7 @@ interface ProductContextValue {
   handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
-  handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
+  handleUpdate: (id: number, title: string, desc: string, file: File | null, thumbnail: File | null, rating: string, brand: string, category: string, price: string) => Promise<null | undefined>;
   search: string;
   setSearch: (search: string) => void
   handleSearch: (search: string) => Promise<undefined | null>;
