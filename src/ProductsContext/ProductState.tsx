@@ -29,7 +29,7 @@ interface ProductContextValue {
   handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
   loading: boolean;
   handleDelete: (id: number) => Promise<null | undefined>;
-  handleUpdate: (id: number, title: string, desc: string, file: File | null) => Promise<null | undefined>;
+  handleUpdate: (id: number, title: string, desc: string, file: File | null, thumbnail: File | null, rating: string, brand: string, category: string, price: string) => Promise<null | undefined>;
   search: string;
   setSearch: (search: string) => void;
   handleSearch: (search: string) => Promise<undefined | null>;
@@ -181,43 +181,46 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   // To update an existing product.
-  const handleUpdate = async (id: number, title: string, desc: string, file: File | null) => {
+  const handleUpdate = async (id: number, title: string, desc: string, file: File | null, thumbnail: File | null, rating: string, brand: string, category: string, price: string) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      setLoading(true)
-      let image = ''
-      if(file !== null) {
-        image = await uploadImage(file);
+      let images = [];
+      if(file != null) {
+        let image = await uploadImage(file);
+        images = [image];
+      }
+      else {
+        images = [null]
       }
 
-      let _id = 0
-      for (let i = 0; i < data.length; i++) {
-        if (i === id - 1) {
-          data[i].title = title;
-          data[i].description = desc;
-          if(image !== '') {
-            data[i].thumbnail = image;
-            data[i].images[0] = image;
-          }
-          _id = data[i].id
-          break;
-        }
+      let thumb = "null";
+      if(thumbnail != null) {
+        thumb = await uploadImage(thumbnail);
       }
-      localStorage.setItem('products', JSON.stringify(data))
-
-
-      if (_id > 0 && _id <= 100) {
-        const response = await fetch(`${host}/products/${_id}`, {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ title: title, description: desc })
-        })
-        const json = await response.json()
+      
+      const updateItem = {
+        id: id,
+        title: title,
+        description: desc,
+        price: parseInt(price),
+        rating: parseFloat(rating),
+        brand: brand,
+        category: category,
+        thumbnail: thumb,
+        images: images
       }
-      setLoading(false)
+
+      const response = await fetch(`${azure_api}/api/products/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updateItem)
+      })
+
+      const json = await response.json();
+      return json;
     }
   }
 
