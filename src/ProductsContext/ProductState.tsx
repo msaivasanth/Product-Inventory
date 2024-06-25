@@ -230,14 +230,11 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     if (res === null) return null
     else {
       setLoading(true)
-      let result = data.filter((product: Product) => {
-        if(product.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 || product.description.toLowerCase().indexOf(search.toLowerCase()) !== -1) return product;
-      })
-      setProducts(result)
-      
-  
-      const resp = await fetch(`${host}/products/search?q=${search}`)
-      const json = resp.json();
+      const response = await fetch(`${azure_api}/api/products/search/${search}`);
+      const json = await response.json();
+
+      setProducts(json);
+
       setLoading(false)
       setIsSearch(true)
     }

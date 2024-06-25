@@ -3,6 +3,7 @@ import productContext from '../ProductsContext/productContext'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 import ScrollToTop from 'react-scroll-to-top'
+import Loader from './Loader'
 
 interface productProps {
   id: number,
@@ -19,11 +20,12 @@ interface HomeProps {
   search: string;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
-  selected: boolean  
+  selected: boolean,
+  loading: boolean  
 }
 const HomePage = () => {
   const context = useContext(productContext)
-  const { products, getProducts, handleDelete, search, isSearch, setIsSearch, selected }: HomeProps = context
+  const { products, getProducts, handleDelete, search, isSearch, setIsSearch, selected, loading}: HomeProps = context
   const navigate = useNavigate()
   const [dSearch, SetDSearch] = useState<string>('')
   
@@ -69,9 +71,9 @@ const HomePage = () => {
       <Navbar />
       <div className='container mt-3'>
         
-        {isSearch && <h2>{`Search Result for '${dSearch}'`}</h2>}
+        {!loading ? (isSearch && <h2>{`${products?.length != 0? "Search Results": "No Search Results"} for '${dSearch}'`}</h2>): ""}
         <div className='row'>
-          {products && products.map((product: productProps, ind: number) => {
+          {!loading ? (products && products.map((product: productProps, ind: number) => {
             return <>
               <div key={product.id} className='col-md-3 my-3 text-center'>
                 <div className="card">
@@ -88,7 +90,7 @@ const HomePage = () => {
                 </div>
               </div>
             </>
-          })}
+          })): <Loader />}
         </div>
       </div>
     </>
