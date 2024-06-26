@@ -26,10 +26,10 @@ interface ProductContextValue {
   handleSearch: (search: string) => Promise<undefined | null>;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
-  searchSuggestions: (search: string) => Promise<Product[] | undefined>
+  searchSuggestions: (search: string) => Promise<Product[] | null>
   selected: boolean;
   setSelected: (selected: boolean) => void
-  selectedCategories: (cat: string) => Promise<Product[] | undefined>
+  selectedCategories: (cat: string) => Promise<Product[] | null>
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -50,10 +50,10 @@ const productContext = createContext<ProductContextValue>({
     handleSearch: async () => null,
     isSearch: false,
     setIsSearch: () => {},
-    searchSuggestions: async () => undefined,
+    searchSuggestions: async () => null,
     selected: false,
     setSelected: () => {},
-    selectedCategories: async () => undefined
+    selectedCategories: async () => null
   });
 
 export default productContext;
