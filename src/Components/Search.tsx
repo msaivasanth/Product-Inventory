@@ -6,7 +6,7 @@ interface contextProps {
     search: string,
     setSearch: (search: string) => void,
     handleSearch: (search: string) => Promise<null | undefined>
-    searchSuggestions: (search: string) => Promise<Product[] | undefined>
+    searchSuggestions: (search: string) => Promise<Product[] | null>
 }
 
 interface Product {
@@ -70,7 +70,7 @@ const Search = () => {
                         <ul className="dropdown-menu">
                             {/* {!search && <div className='text-center'>Enter something...</div>} */}
                             {sugg && sugg?.map((product: Product) => {
-                                return <li><a className="dropdown-item" onClick={() => {setSearch(product.title)}} href='#'>{product.title}</a></li>
+                                return <li><a className="dropdown-item" onClick={() => {setSearch(product.title)}} style={{cursor:"pointer"}}>{product.title}</a></li>
                             })}
                         </ul>
                     </div>

@@ -35,10 +35,10 @@ interface ProductContextValue {
   handleSearch: (search: string) => Promise<undefined | null>;
   isSearch: boolean;
   setIsSearch: (isSearch: boolean) => void
-  searchSuggestions: (search: string) => Promise<Product[] | undefined>
+  searchSuggestions: (search: string) => Promise<Product[] | null>
   selected: boolean;
   setSelected: (selected: boolean) => void;
-  selectedCategories: (cat: string) => Promise<Product[] | undefined>
+  selectedCategories: (cat: string) => Promise<Product[] | null>
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -52,8 +52,8 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const [search, setSearch] = useState<string>('')
   const [isSearch, setIsSearch] = useState<boolean>(false)
   const [selected, setSelected] = useState<boolean>(false)
+  const [data, setData] = useState<Product[]>([])
 
-  let data = JSON.parse(localStorage.getItem('products')!) || []
 
   // To handle the login functionality.
   const handleLogin = async () => {
@@ -116,6 +116,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       const response = await fetch(`${azure_api}/api/products`);
       const json = await response.json();
       setProducts(json);
+      setData(json)
     }
   }
 
@@ -230,14 +231,11 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     if (res === null) return null
     else {
       setLoading(true)
-      let result = data.filter((product: Product) => {
-        if(product.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 || product.description.toLowerCase().indexOf(search.toLowerCase()) !== -1) return product;
-      })
-      setProducts(result)
-      
-  
-      const resp = await fetch(`${host}/products/search?q=${search}`)
-      const json = resp.json();
+      const response = await fetch(`${azure_api}/api/products/search/${search}`);
+      const json = await response.json();
+
+      setProducts(json);
+
       setLoading(false)
       setIsSearch(true)
     }
@@ -248,6 +246,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
+      console.log(data)
       const filteredResult = data.filter((product: Product) => {
         if(search && product.title.toLowerCase().includes(search.toLowerCase())) {
           return product.title
