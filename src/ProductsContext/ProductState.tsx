@@ -257,7 +257,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   const selectedCategories = async (cat: string) => {
-    setSelected(true)
+    setIsSearch(false)
     const res = await checkFn();
     if (res === null) return null
     else {

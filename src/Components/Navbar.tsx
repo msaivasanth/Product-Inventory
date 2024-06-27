@@ -15,7 +15,7 @@ interface Product {
 
 interface contextProps {
   setSelected: (selected: boolean) => void,
-  selectedCategories: (cat: string) => Promise<Product[] | undefined>,
+  selectedCategories: (cat: string) => Promise<Product[] | null>,
   selected: boolean,
   
 }
@@ -59,11 +59,9 @@ const Navbar = () => {
                   Categories
                 </button>
                 <ul className="dropdown-menu">
-                  <li><button className="dropdown-item" onClick={() => handleSelect("smartphones")}>smartphones</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("laptops")}>laptops</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("fragrances")}>fragrances</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("groceries")}>groceries</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("furniture")}>furniture</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("Mobile")}>Mobile</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("UCatogory_1.2")}>UCatogory_1.2</button></li>
+                  <li><button className="dropdown-item" onClick={() => handleSelect("test")}>test</button></li>
                   {/* <li><hr className="dropdown-divider" /></li>
             <li><a className="dropdown-item" href="#">Something else here</a></li> */}
                 </ul>
