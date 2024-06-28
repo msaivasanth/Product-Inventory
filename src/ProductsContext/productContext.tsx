@@ -30,6 +30,7 @@ interface ProductContextValue {
   selected: boolean;
   setSelected: (selected: boolean) => void
   selectedCategories: (cat: string) => Promise<Product[] | null>
+  categories: String[];
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -53,7 +54,8 @@ const productContext = createContext<ProductContextValue>({
     searchSuggestions: async () => null,
     selected: false,
     setSelected: () => {},
-    selectedCategories: async () => null
+    selectedCategories: async () => null,
+    categories: []
   });
 
 export default productContext;

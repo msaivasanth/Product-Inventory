@@ -16,15 +16,15 @@ interface Product {
 interface contextProps {
   setSelected: (selected: boolean) => void,
   selectedCategories: (cat: string) => Promise<Product[] | null>,
-  selected: boolean,
-  
+  categories: String[]
 }
 const Navbar = () => {
   
   const navigate = useNavigate();
   const context = useContext(productContext)
-  const { selectedCategories, selected, setSelected }: contextProps = context
+  const { selectedCategories, setSelected, categories }: contextProps = context
 
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     alert('LoggedOut successfully!')
@@ -59,11 +59,9 @@ const Navbar = () => {
                   Categories
                 </button>
                 <ul className="dropdown-menu">
-                  <li><button className="dropdown-item" onClick={() => handleSelect("Mobile")}>Mobile</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("UCatogory_1.2")}>UCatogory_1.2</button></li>
-                  <li><button className="dropdown-item" onClick={() => handleSelect("test")}>test</button></li>
-                  {/* <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item" href="#">Something else here</a></li> */}
+                  {categories.map(cat => {
+                    return <li><button className="dropdown-item" onClick={() => handleSelect(`${cat}`)}>{cat}</button></li>
+                  })}
                 </ul>
               </li>
 
