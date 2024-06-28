@@ -39,6 +39,7 @@ interface ProductContextValue {
   selected: boolean;
   setSelected: (selected: boolean) => void;
   selectedCategories: (cat: string) => Promise<Product[] | null>
+  categories: String[]
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -53,6 +54,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   const [isSearch, setIsSearch] = useState<boolean>(false)
   const [selected, setSelected] = useState<boolean>(false)
   const [data, setData] = useState<Product[]>([])
+  const [categories, setCategories] = useState<String[]>([]);
 
 
   // To handle the login functionality.
@@ -117,6 +119,11 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       const json = await response.json();
       setProducts(json);
       setData(json)
+
+      // To fetch categories
+      const resp = await fetch(`${azure_api}/api/products/categories`);
+      const json2 = await resp.json();
+      setCategories(json2);
     }
   }
 
@@ -257,7 +264,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   const selectedCategories = async (cat: string) => {
-    setSelected(true)
+    setIsSearch(false)
     const res = await checkFn();
     if (res === null) return null
     else {
@@ -271,7 +278,11 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
       return res
     }
   }
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories }
+
+  const fetchCategories = async () => {
+    
+  }
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories, categories }
   return (
     <productContext.Provider value={value}>
       {props.children}
