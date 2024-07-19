@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import productContext from '../ProductsContext/productContext';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
+import { toast } from 'react-toastify';
 
 interface AddItemProps {
     handleAddItem: (title: string, desc: string, price: string, rating: string, brand: string, category: string, thumbnail: File, file: File) => Promise<null | undefined>;
@@ -25,20 +26,25 @@ const AddItem = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!title || !desc || !image || !price || !rating || !thumbnail || !brand || !category) {
-            alert('Please Enter all the details.')
+            toast.info('Please Enter all the details.')
         }
         else {
             const res = await handleAddItem(title, desc, price, rating, brand, category, thumbnail, image)
             if(res === null) {
-                alert("Session expired! Please login again.")
+                toast.error("Session expired! Please login again.", {
+                    theme: "colored"
+                })
                 navigate('/login')
             }
             else {
                 setTitle('');
                 setDesc('');
                 setImage(null)
-                navigate('/')
-                alert('Your item is added, scroll down to view')
+                navigate('/home')
+                toast.success('Your item is added, scroll down to view', {
+                    position: "bottom-right",
+                    theme: "colored"
+                })
             }
         }
     };
@@ -100,7 +106,7 @@ const AddItem = () => {
                     <input type="file" name="" id="" className='form-control form-control-lg border-black' onChange={handleFileChange} required/>
                 </div>
                 <div className='d-flex justify-content-between mt-5'>
-                    <button type="button" className="btn btn-primary fs-3" onClick={() => navigate('/')}>Go Back</button>
+                    <button type="button" className="btn btn-primary fs-3" onClick={() => navigate('/home')}>Go Back</button>
                     <button type="submit" className="btn btn-success fs-3">Submit</button>
                 </div>
             </form>

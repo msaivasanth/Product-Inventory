@@ -8,6 +8,9 @@ import ProductItem from './Components/ProductItem';
 import AddItem from './Components/AddItem';
 import UpdateItem from './Components/UpdateItem';
 import { TimeoutProvider } from './Components/TimeoutProvider';
+import Welcome from './Components/Welcome';
+import Signup from './Components/Signup';
+import Chatpage from './Components/Chatpage';
 
 
 function App() {
@@ -17,11 +20,14 @@ function App() {
         <BrowserRouter>
           <TimeoutProvider>
           <Routes>
+                <Route path='/' element={<Welcome />} />
                 <Route path='/login' element={<Login />} />
-                <Route path='/' element={<HomePage />} />
+                <Route path='/signup' element={<Signup />} />
+                <Route path='/home' element={<HomePage />} />
                 <Route path='/product/:id' element={<ProductItem />} />
                 <Route path='/addItem' element={<AddItem />} />
                 <Route path='/updateItem/:id' element={<UpdateItem />} />
+                <Route path='/chat' element={<Chatpage />} />
           </Routes>
           </TimeoutProvider>
         </BrowserRouter>

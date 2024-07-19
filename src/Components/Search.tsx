@@ -1,6 +1,7 @@
 import React, { ChangeEventHandler, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import productContext from '../ProductsContext/productContext';
+import { toast } from 'react-toastify';
 
 interface contextProps {
     search: string,
@@ -27,12 +28,12 @@ const Search = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (search === '') {
-            alert("Enter something to search")
+            toast.warning("Enter something to search")
         }
         else {
             const res = await handleSearch(search);
             if (res === null) {
-                alert("Session expired! Please login again.")
+                toast.error("Session expired! Please login again.")
                 navigate('/login')
             }
         }
