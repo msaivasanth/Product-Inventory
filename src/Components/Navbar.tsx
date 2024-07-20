@@ -18,18 +18,20 @@ interface contextProps {
   setSelected: (selected: boolean) => void,
   selectedCategories: (cat: string) => Promise<Product[] | null>,
   categories: String[],
-  closeConnection: () => Promise<void>
+  closeConnection: () => Promise<void>,
+  setSelectedChat: (selectedChat: string) => void
 }
 const Navbar = () => {
   
   const navigate = useNavigate();
   const context = useContext(productContext)
-  const { selectedCategories, setSelected, categories, closeConnection }: contextProps = context
+  const { selectedCategories, setSelected, categories, closeConnection, setSelectedChat }: contextProps = context
 
   
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem("user");
+    setSelectedChat("")
     closeConnection();
     toast.success('LoggedOut successfully!', {
       position: "bottom-right",

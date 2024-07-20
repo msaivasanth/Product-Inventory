@@ -60,7 +60,8 @@ interface ProductContextValue {
   userId: string,
   selectedChat: string,
   message: string,
-  setMessage: (message: string) => void
+  setMessage: (message: string) => void,
+  setSelectedChat: (selectedChat: string) => void
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -474,7 +475,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories, categories, sendEmail, verifyOtp, SignUp, fetchChats, getUsers, getMessages, handleSendMessage, createChat, joinRoom, closeConnection, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage }
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories, categories, sendEmail, verifyOtp, SignUp, fetchChats, getUsers, getMessages, handleSendMessage, createChat, joinRoom, closeConnection, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, setSelectedChat }
   return (
     <productContext.Provider value={value}>
       {props.children}

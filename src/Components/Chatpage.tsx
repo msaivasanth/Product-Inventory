@@ -75,7 +75,7 @@ const Chatpage = () => {
                     </div>
                 </div>
                 <div className="col-8 shadow p-3 mb-2 bg-body-tertiary rounded border border-black">
-                    <div className={`${selectedChat === "" && "d-none"}`}>
+                    {selectedChat !== "" ?<div className={`${selectedChat === "" && "d-none"}`}>
                         <div className={`fs-1 bg-secondary-subtle px-3 py-1 rounded `}>
                             {selectedChat}
                         </div>
@@ -94,7 +94,7 @@ const Chatpage = () => {
                             </form>
                         </div>
 
-                    </div>
+                    </div>: <div className='fs-1 d-flex justify-content-center'>Select a chat or search users to start messaging</div>}
                 </div>
             </div>
         </div>

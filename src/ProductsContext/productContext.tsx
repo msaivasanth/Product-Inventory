@@ -51,7 +51,8 @@ interface ProductContextValue {
   userId: string,
   selectedChat: string,
   message: string,
-  setMessage: (message: string) => void
+  setMessage: (message: string) => void,
+  setSelectedChat: (selectedChat: string) => void
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -96,7 +97,8 @@ const productContext = createContext<ProductContextValue>({
     userId: "",
     selectedChat: "",
     message: "",
-    setMessage: () => {}
+    setMessage: () => {},
+    setSelectedChat: () => {}
   });
 
 export default productContext;
