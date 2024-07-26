@@ -35,14 +35,12 @@ const Login = () => {
             const resp = await handleLogin()
             
             if(resp !== null) {
-                console.log(resp.token)
                 if(resp.token !== undefined) {
                     localStorage.setItem('token', resp.token)
                     toast.success("Logged in successfully", {
                         position: "bottom-right",
                         theme:"colored"
                     });
-                    // console.log(resp)
                     navigate('/home')
                 }
                 else {

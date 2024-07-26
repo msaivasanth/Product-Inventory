@@ -1,10 +1,12 @@
-import React, { FC, ReactNode, RefObject, useRef, useState } from 'react'
+import React, { FC, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import productContext from './productContext'
 import thumbnailImg from '../images/dummy.jpg'
 import Img from '../images/image.webp'
 import { Search } from 'react-router-dom';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { toast } from 'react-toastify';
 
+var user = localStorage.getItem("userName");
 interface ProductStateProps {
   children: ReactNode;
 }
@@ -16,6 +18,13 @@ interface Product {
   thumbnail: string;
   images: string[];
   category: string
+}
+
+interface Message {
+  id: string, 
+  sender: string,
+  content: string,
+  chat: string
 }
 
 interface ProductContextValue {
@@ -47,21 +56,27 @@ interface ProductContextValue {
   fetchChats: () => Promise<void>,
   getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
   getMessages: (id: string, chatName: string) => Promise<void>,
-  handleSendMessage: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
+  handleSendMessage: () => Promise<void>,
   createChat: (id: string, sender: string, senderName: string) => Promise<void>,
-  joinRoom: (user: string, room: string, name: string) => Promise<void>,
+  joinRoom: (user: string, room: string, receiverId: string) => Promise<void>,
   closeConnection: () => Promise<void>,
   chats: [],
   val: string,
   setVal: (val: string) => void,
-  messages: [],
+  messages: Message[],
   ref:  RefObject<HTMLButtonElement> | null,
   users: [],
   userId: string,
   selectedChat: string,
   message: string,
   setMessage: (message: string) => void,
-  setSelectedChat: (selectedChat: string) => void
+  setSelectedChat: (selectedChat: string) => void,
+  chatId: string,
+  connection: HubConnection | undefined,
+  notifications: Message[]
+  setNotifications: (notifcations: Message[]) => void,
+  setMessages: (messages: Message[]) => void,
+  setConnection: (connection: HubConnection | undefined) => void,
 }
 
 const ProductState: React.FC<ProductStateProps> = (props: any) => {
@@ -81,18 +96,22 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   // UseStates related to chat feature
   const Id = localStorage.getItem("user");
   const [chats, setChats] = useState<[]>([]);
-  const [messages, setMessages] = useState<[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<string>("");
   const [chatId, setChatId] = useState<string>("");
   const [selectedChat, setSelectedChat] = useState<string>("");
   const [users, setUsers] = useState<[]>([]);
   const [val, setVal] = useState<string>("");
   const [userId, setUserId] = useState<string>(Id!)
+  const [notifications, setNotifications] = useState<Message[]>([]);
+  const [receiver, setReceiver] = useState<string>("")
   
   const [connection, setConnection] = useState<HubConnection>();
 
+
   const ref = useRef<HTMLButtonElement | null>(null)
 
+  
 
   // To handle the login functionality.
   const handleLogin = async () => {
@@ -116,6 +135,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   
       localStorage.setItem("user", c_json.id);
       setUserId(c_json.id);
+      localStorage.setItem("userName", c_json.name);
   
       return json
     }
@@ -303,7 +323,6 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     const res = await checkFn();
     if (res === null) return null
     else {
-      console.log(data)
       const filteredResult = data.filter((product: Product) => {
         if (search && product.title.toLowerCase().includes(search.toLowerCase())) {
           return product.title
@@ -386,12 +405,10 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   // 2. Search users based on the name
   const getUsers = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(users)
     ref.current?.click();
     if (val.length !== 0 || val !== "") {
         const respone = await fetch(`http://localhost:5103/api/Chat/users/${val}`);
         const json = await respone.json();
-        console.log(json)
         setUsers(json)
     }
     if(val.length === 0) setUsers([])
@@ -401,66 +418,57 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   // 3. Fetch messages related to a chat
   const getMessages = async (id: string, chatName: string) => {
     setSelectedChat(chatName);
-    setChatId(id)
+    setChatId(id);
     const response = await fetch(`http://localhost:5103/api/Chat/fetchMessages/${id}`);
     const json = await response.json();
     setMessages(json);
   }
 
   // 4. Send message to selected user
-  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const response = await fetch(`http://localhost:5103/api/Chat/sendMessage`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ sender: userId, content: message, chat: chatId })
-    })
-    const json = await response.json();
-    console.log(json)
-
-    await connection?.invoke("SendMessage", message)
-
-    await getMessages(chatId, selectedChat);
-    setMessage("")
+  const handleSendMessage = async () => {
+    
+      if(message === "") {
+        toast.error("Enter something to send", {
+          position: "bottom-right",
+      });
+    }
+    else {
+      const response = await fetch(`http://localhost:5103/api/Chat/sendMessage`, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ sender: userId, content: message, chat: chatId })
+      })
+      const json = await response.json();
+      
+      await connection?.invoke("SendMessage", {user: localStorage.getItem("userName"), room: receiver}, json)
+      setMessages([...messages, json]);
+  
+      setMessage("")
+    }
   }
 
   // 5. Fetch a chat on searched chats
   const createChat = async (id: string, sender: string, senderName: string) => {
+    setSelectedChat(senderName);
+    setChatId(id);
     const response = await fetch(`http://localhost:5103/api/Chat/chat/${id}/${sender}`);
     const json = await response.json();
-    console.log(json)
 
-    await getMessages(json.id, senderName);
+    await joinRoom(senderName, json.id, receiver);
+
   }
 
   // 6. Join the room for real time chatting, between sender and receiver
-  const joinRoom = async (user: string, room: string, name: string) => {
+  const joinRoom = async (user: string, room: string, receiverId: string) => {
     try {
-        const connection = new HubConnectionBuilder().withUrl("http://localhost:5103/chatRoom")
-        .configureLogging(LogLevel.Information)
-        .build();
-
-        connection.on("ReceiveMessage", (message) => {
-            console.log(`mesage received: ${message}`)
-            getMessages(room, user);
-        })
-
-        connection.onclose((e) => {
-            setConnection(undefined)
-        })
-
-        await connection.start();
+        setReceiver(receiverId)
         
+        await connection?.invoke("JoinRoom", {User: userId, room});
+        await getMessages(room, user);
         
-        const User = name;
-        await connection.invoke("JoinRoom", {User, room});
-      
-        setConnection(connection)
 
-        // await connection.stop();
-        // setConnection(undefined);
     } catch (error) {
         console.log(error)
     }
@@ -475,7 +483,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
     }
   }
 
-  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories, categories, sendEmail, verifyOtp, SignUp, fetchChats, getUsers, getMessages, handleSendMessage, createChat, joinRoom, closeConnection, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, setSelectedChat }
+  const value: ProductContextValue = { getProducts, products, setName, setPassword, name, password, handleLogin, handleGetDetails, handleAddItem, loading, handleDelete, handleUpdate, search, setSearch, handleSearch, isSearch, setIsSearch, searchSuggestions, setSelected, selected, selectedCategories, categories, sendEmail, verifyOtp, SignUp, fetchChats, getUsers, getMessages, handleSendMessage, createChat, joinRoom, closeConnection, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, setSelectedChat, chatId, connection, notifications, setNotifications, setMessages, setConnection }
   return (
     <productContext.Provider value={value}>
       {props.children}

@@ -1,3 +1,4 @@
+import { HubConnection } from '@microsoft/signalr';
 import { createContext, RefObject } from 'react';
 
 interface Product {
@@ -8,6 +9,12 @@ interface Product {
   images: string[];
 }
 
+interface Message {
+  id: string, 
+  sender: string,
+  content: string,
+  chat: string
+}
 interface ProductContextValue {
   getProducts: () => Promise<null | undefined>;
   products: Product[] | undefined;
@@ -38,21 +45,27 @@ interface ProductContextValue {
   fetchChats: () => Promise<void>,
   getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
   getMessages: (id: string, chatName: string) => Promise<void>,
-  handleSendMessage: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
+  handleSendMessage: () => Promise<void>,
   createChat: (id: string, sender: string, senderName: string) => Promise<void>,
-  joinRoom: (user: string, room: string, name: string) => Promise<void>,
+  joinRoom: (user1: string, room: string, receiverId: string) => Promise<void>,
   closeConnection: () => Promise<void>,
   chats: [],
   val: string,
   setVal: (val: string) => void,
-  messages: [],
+  messages: Message[],
   ref:  RefObject<HTMLButtonElement> |null,
   users: [],
   userId: string,
   selectedChat: string,
   message: string,
   setMessage: (message: string) => void,
-  setSelectedChat: (selectedChat: string) => void
+  setSelectedChat: (selectedChat: string) => void,
+  chatId: string,
+  connection: HubConnection | undefined,
+  notifications: Message[]
+  setNotifications: (notifcations: Message[]) => void,
+  setMessages: (messages: Message[]) => void,
+  setConnection: (connection: HubConnection | undefined) => void,
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -98,7 +111,13 @@ const productContext = createContext<ProductContextValue>({
     selectedChat: "",
     message: "",
     setMessage: () => {},
-    setSelectedChat: () => {}
+    setSelectedChat: () => {},
+    chatId: "",
+    connection: undefined,
+    notifications: [],
+    setNotifications: () => {},
+    setMessages: () => {},
+    setConnection: () => {},
   });
 
 export default productContext;
