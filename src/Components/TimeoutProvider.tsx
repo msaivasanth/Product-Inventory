@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export function TimeoutProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -18,7 +19,9 @@ export function TimeoutProvider({ children }: { children: ReactNode }) {
       timeoutRef.current = setTimeout(() => {
         localStorage.removeItem('token');
         navigate("/login");
-        alert("Session expired! Please login again.");
+        toast.error("Session expired! Please login again.", {
+          theme: "colored"
+        });
       }, 600000); 
     };
 

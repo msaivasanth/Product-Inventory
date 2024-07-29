@@ -1,4 +1,5 @@
-import { createContext } from 'react';
+import { HubConnection } from '@microsoft/signalr';
+import { createContext, RefObject } from 'react';
 
 interface Product {
   id: number;
@@ -8,6 +9,12 @@ interface Product {
   images: string[];
 }
 
+interface Message {
+  id: string, 
+  sender: string,
+  content: string,
+  chat: string
+}
 interface ProductContextValue {
   getProducts: () => Promise<null | undefined>;
   products: Product[] | undefined;
@@ -31,6 +38,34 @@ interface ProductContextValue {
   setSelected: (selected: boolean) => void
   selectedCategories: (cat: string) => Promise<Product[] | null>
   categories: String[];
+  sendEmail: (email: string) => Promise<string | null>
+  SignUp: (name: string, email: string, password: string, gender: string) => Promise<string | null>
+  verifyOtp: (otp: string) => Promise<string | null>,
+
+  fetchChats: () => Promise<void>,
+  getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
+  getMessages: (id: string, chatName: string) => Promise<void>,
+  handleSendMessage: () => Promise<void>,
+  createChat: (id: string, sender: string, senderName: string) => Promise<void>,
+  joinRoom: (user1: string, room: string, receiverId: string) => Promise<void>,
+  closeConnection: () => Promise<void>,
+  chats: [],
+  val: string,
+  setVal: (val: string) => void,
+  messages: Message[],
+  ref:  RefObject<HTMLButtonElement> |null,
+  users: [],
+  userId: string,
+  selectedChat: string,
+  message: string,
+  setMessage: (message: string) => void,
+  setSelectedChat: (selectedChat: string) => void,
+  chatId: string,
+  connection: HubConnection | undefined,
+  notifications: Message[]
+  setNotifications: (notifcations: Message[]) => void,
+  setMessages: (messages: Message[]) => void,
+  setConnection: (connection: HubConnection | undefined) => void,
 }
 
 const productContext = createContext<ProductContextValue>({
@@ -55,7 +90,34 @@ const productContext = createContext<ProductContextValue>({
     selected: false,
     setSelected: () => {},
     selectedCategories: async () => null,
-    categories: []
+    categories: [],
+    sendEmail: async () => null,
+    SignUp: async () => null,
+    verifyOtp: async () => null,
+    fetchChats: async () => {},
+    getUsers: async () => {},
+    getMessages: async () => {},
+    handleSendMessage: async () => {},
+    createChat: async () => {},
+    joinRoom: async () => {},
+    closeConnection: async () => {},
+    chats: [],
+    val: "",
+    setVal: () => {},
+    messages: [],
+    ref: null,
+    users: [],
+    userId: "",
+    selectedChat: "",
+    message: "",
+    setMessage: () => {},
+    setSelectedChat: () => {},
+    chatId: "",
+    connection: undefined,
+    notifications: [],
+    setNotifications: () => {},
+    setMessages: () => {},
+    setConnection: () => {},
   });
 
 export default productContext;

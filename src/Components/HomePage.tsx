@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 import ScrollToTop from 'react-scroll-to-top'
 import Loader from './Loader'
+import { toast } from 'react-toastify'
 
 interface productProps {
   id: number,
@@ -49,7 +50,7 @@ const HomePage = () => {
   const getProductsFn = async () => {
     const res = await getProducts()
     if (res === null) {
-      alert("Session expired! Please login again.")
+      toast.error("Session expired! Please login again.")
       navigate('/login')
     }
   }
@@ -59,10 +60,10 @@ const HomePage = () => {
     if(del === true) {
       const res = await handleDelete(id)
       if (res === null) navigate('/login')
-      else alert('Item deleted successfully')
+      else toast.success('Item deleted successfully')
     }
     else {
-      alert("Item is not deleted")
+      toast.info("Item is not deleted")
     }
   }
   return (
@@ -82,7 +83,7 @@ const HomePage = () => {
                     <h5 className="card-title">{product.title.slice(0, 20) + (product.title.length > 20 ? "..." : "")}</h5>
                     <p className="card-text">{product.description.slice(0, 20) + (product.description.length > 20 ? "..." : "")}</p>
                   
-                    <Link to={`product/${product.id}`} className="btn btn-dark">Read More</Link>
+                    <Link to={`/product/${product.id}`} className="btn btn-dark">Read More</Link>
 
                     {isSearch === false && <><button className="fa-solid fa-trash-can bg-light ms-3 btn btn-light" onClick={() => handleDeleteItem(product.id)}></button>
                     <Link to={`/updateItem/${product.id}`} className="fa-solid fa-pen-to-square mx-2 btn btn-light"></Link></>}

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext'
 import Loader from './Loader';
+import { toast } from 'react-toastify';
 
 interface productDetailsProps {
     title: string,
@@ -32,7 +33,7 @@ const ProductItem = () => {
     const getDetails = async () => {
         const res: productDetailsProps | null = await handleGetDetails(Number(id))
         if(res === null) {
-            alert("Session expired! Please login again.")
+            toast.error("Session expired! Please login again.",)
             navigate('/login')
         }
         else {
@@ -46,7 +47,7 @@ const ProductItem = () => {
     return (
         <div className='container border border-black border-2 rounded mt-3 p-2 pb-3'>
             <div className="row mt-3 mx-3 ">
-            <Link to={'/'} className='btn btn-dark btn-lg col-1'>Go Back</Link>
+            <Link to={'/home'} className='btn btn-dark btn-lg col-1'>Go Back</Link>
             <h1 className='text-center col-10'>Product Details...</h1>
             </div>
             <div className="row text-center mt-4">

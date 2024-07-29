@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -10,12 +11,15 @@
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.23",
+    "emoji-picker-react": "^4.11.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-input-emoji": "^5.9.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "react-scroll-to-top": "^3.0.0",
+    "react-toastify": "^10.0.5",
     "typescript": "^5.4.5",
     "web-vitals": "^2.1.4"
   },

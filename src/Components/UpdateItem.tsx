@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import productContext from '../ProductsContext/productContext';
 import Loader from './Loader';
+import { toast } from 'react-toastify';
 
 interface productDetailsProps {
     title: string,
@@ -51,7 +52,7 @@ const UpdateItem = () => {
         setLoading(true)
         const res: productDetailsProps | null = await handleGetDetails(Number(id))
         if(res === null) {
-            alert("Session expired! Please login again.")
+            toast.error("Session expired! Please login again.")
             navigate('/login')
         }
         else {
@@ -74,12 +75,16 @@ const UpdateItem = () => {
             setLoading(true)
             const res = await handleUpdate(Number(id), title, description, image !, thumbnail !, rating, brand, category, price);
             if(res === null) {
-                alert('Item update failed')
+                toast.info('Item update canceled!', {
+                    position: "bottom-right",
+                })
                 navigate('/login')
             }
             else {
-                alert("Item updated Successfully")
-                navigate('/')
+                toast.success("Item updated Successfully", {
+                    position: "bottom-right",
+                })
+                navigate('/home')
             }
             setLoading(false)
         }
@@ -136,7 +141,7 @@ const UpdateItem = () => {
                     <input type="file" name="" id="" className='form-control form-control-lg border-black' onChange={handleFileChange} />
                 </div>
                 <div className='d-flex justify-content-between mt-5'>
-                    <button type="button" className="btn btn-primary fs-3" onClick={() => navigate('/')}>Go Back</button>
+                    <button type="button" className="btn btn-primary fs-3" onClick={() => navigate('/home')}>Go Back</button>
                     <button type="submit" className="btn btn-success fs-3">Submit</button>
                 </div>
             </form>
