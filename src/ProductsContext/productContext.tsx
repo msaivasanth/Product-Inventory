@@ -45,7 +45,7 @@ interface ProductContextValue {
   fetchChats: () => Promise<void>,
   getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
   getMessages: (id: string, chatName: string) => Promise<void>,
-  handleSendMessage: () => Promise<void>,
+  handleSendMessage: (message: string) => Promise<void>,
   createChat: (id: string, sender: string, senderName: string) => Promise<void>,
   joinRoom: (user1: string, room: string, receiverId: string) => Promise<void>,
   closeConnection: () => Promise<void>,
