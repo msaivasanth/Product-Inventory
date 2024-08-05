@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import InputEmojiWithRef from 'react-input-emoji';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { toast } from 'react-toastify';
 var compare = ""
 var chatImg = "";
 
@@ -49,6 +50,7 @@ const Chatpage = () => {
 
     const [file, setFile] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [prog, setProg] = useState<number>(0);
 
     useEffect(() => {
         const connection = new HubConnectionBuilder().withUrl("http://localhost:5103/chatRoom")
@@ -98,31 +100,42 @@ const Chatpage = () => {
     }
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setProg(10)
         const files = e.target.files;
         let image = ''
-        if (files) {
-            setLoading(true)
-
-            let file = files[0];
-
-            console.log(file.type)
-            const data = new FormData()
-            data.append('file', file!)
-            data.append('upload_preset', 'Product-Inventory')
-            data.append('cloud_name', "detuevaxw")
-
-            const response = await fetch('https://api.cloudinary.com/v1_1/detuevaxw/upload', {
-                method: 'post',
-                body: data,
-            })
-            const json = await response.json()
-            image = json.url.toString()
+        try {
+            
+            if (files) {
+                setLoading(true)
+                setProg(25)
+    
+                let file = files[0];
+    
+                const data = new FormData()
+                data.append('file', file!)
+                data.append('upload_preset', 'Product-Inventory')
+                data.append('cloud_name', "detuevaxw")
+                setProg(50)
+    
+                const response = await fetch('https://api.cloudinary.com/v1_1/detuevaxw/upload', {
+                    method: 'post',
+                    body: data,
+                })
+                setProg(75)
+                const json = await response.json()
+                image = json.url.toString()
+            }
+            else {
+                alert('please upload png or jpeg files or image not found.')
+            }
+            setProg(100)
+            setTimeout(() => {
+                setLoading(false)
+                setFile(image)
+            }, 2000)
+        } catch (error) {
+            toast.error("Error in sending file", {position: 'bottom-right', theme: "colored"})
         }
-        else {
-            alert('please upload png or jpeg files or image not found.')
-        }
-        setLoading(false)
-        setFile(image)
     }
 
     const isUrl = (message: string) => {
@@ -245,14 +258,16 @@ const Chatpage = () => {
                                         <div className="modal-content">
                                             <div className="modal-header">
                                                 <h1 className="modal-title fs-2" id="exampleModalLabel">Select a file to send</h1>
-                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => {setLoading(false); setFile(""); }}></button>
                                             </div>
                                             <div className="modal-body">{
-                                                loading === true ? "loading...." :
+                                                loading === true ? <div className="progress" role="progressbar" aria-label="Default striped example" aria-valuenow={10} aria-valuemin={0} aria-valuemax={100}>
+                                                <div className="progress-bar progress-bar-striped" style={{"width": `${prog}%`}}></div>
+                                              </div> :
                                                     <input className="form-control form-control-lg" type="file" id="formFileMultiple" onChange={(e) => handleChange(e)}/>}
                                             </div>
                                             <div className="modal-footer">
-                                                <button type="button" className="btn btn-success btn-lg" onClick={() => handleSendMessage(file!)} data-bs-dismiss="modal">Send</button>
+                                                <button type="button" className="btn btn-success btn-lg" onClick={() =>file === "" ? toast.error("Select a file to send", {position: "bottom-right", theme: "colored"}): handleSendMessage(file!)} data-bs-dismiss="modal">Send</button>
                                             </div>
                                         </div>
                                     </div>
