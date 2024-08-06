@@ -5,8 +5,7 @@ import EmojiPicker from 'emoji-picker-react';
 import InputEmojiWithRef from 'react-input-emoji';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { toast } from 'react-toastify';
-var compare = ""
-var chatImg = "";
+let compare = ""
 
 interface Message {
     id: string,
@@ -42,7 +41,7 @@ interface contextInterface {
 }
 const Chatpage = () => {
 
-    var { fetchChats, getUsers, handleSendMessage, createChat, joinRoom, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, chatId, connection, notifications, setNotifications, setMessages, setConnection }: contextInterface = useContext(productContext);
+    const { fetchChats, getUsers, handleSendMessage, createChat, joinRoom, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, chatId, connection, notifications, setNotifications, setMessages, setConnection }: contextInterface = useContext(productContext);
 
 
     const mesgRef = useRef<HTMLDivElement>(null);
@@ -95,7 +94,7 @@ const Chatpage = () => {
     const handleNotifications = async (noti: any) => {
         await joinRoom(noti.user, noti.message.chat, noti.message.sender);
         compare = noti.message.chat
-        var notis = notifications.filter((not) => { return noti != not });
+        let notis = notifications.filter((not) => { return noti != not });
         setNotifications(notis)
     }
 

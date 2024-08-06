@@ -6,7 +6,7 @@ import { Search } from 'react-router-dom';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-toastify';
 
-var user = localStorage.getItem("userName");
+let user = localStorage.getItem("userName");
 interface ProductStateProps {
   children: ReactNode;
 }
