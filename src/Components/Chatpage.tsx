@@ -4,21 +4,21 @@ import { Link } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import InputEmojiWithRef from 'react-input-emoji';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-var compare = ""
-var name = "";
+import { toast } from 'react-toastify';
+let compare = ""
 
 interface Message {
-    id: string, 
+    id: string,
     sender: string,
     content: string,
     chat: string
-  }
+}
 
 interface contextInterface {
     fetchChats: () => Promise<void>,
     getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
     getMessages: (id: string, chatName: string) => Promise<void>,
-    handleSendMessage: () => Promise<void>,
+    handleSendMessage: (message: string) => Promise<void>,
     createChat: (id: string, sender: string, senderName: string) => Promise<void>,
     joinRoom: (user: string, room: string, receiverId: string) => Promise<void>,
     closeConnection: () => Promise<void>,
@@ -40,32 +40,37 @@ interface contextInterface {
     setConnection: (connection: HubConnection | undefined) => void
 }
 const Chatpage = () => {
-    
-    var { fetchChats, getUsers, handleSendMessage, createChat, joinRoom, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, chatId, connection, notifications, setNotifications, setMessages, setConnection }: contextInterface = useContext(productContext);
 
-    
-    const [sender, setSender] = useState<string>("");
+    const { fetchChats, getUsers, handleSendMessage, createChat, joinRoom, chats, val, setVal, messages, ref, users, userId, selectedChat, message, setMessage, chatId, connection, notifications, setNotifications, setMessages, setConnection }: contextInterface = useContext(productContext);
+
+
+    const mesgRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null)
+
+    const [file, setFile] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [prog, setProg] = useState<number>(0);
 
     useEffect(() => {
         const connection = new HubConnectionBuilder().withUrl("http://localhost:5103/chatRoom")
-        .build();
-          
+            .build();
+
         connection.onclose((e) => {
-          setConnection(undefined)
+            setConnection(undefined)
         })
-        
+
         connection.start().then((res) => {
-            connection.invoke("JoinRoom", {user: "sender", room: userId}).then().catch(error => console.log(error));
+            connection.invoke("JoinRoom", { user: "sender", room: userId }).then().catch(error => console.log(error));
         }).catch(error => console.log(error));
 
         setConnection(connection)
 
-    },[])
-    
+    }, [])
+
     useEffect(() => {
         connection?.on("NewReceiveMessage", (newMessage: any) => {
-            if(compare === "" || compare !== newMessage.message.chat) {
-                if(!notifications.includes(newMessage)) {
+            if (compare === "" || compare !== newMessage.message.chat) {
+                if (!notifications.includes(newMessage)) {
                     setNotifications([newMessage, ...notifications]);
                 }
             }
@@ -74,37 +79,96 @@ const Chatpage = () => {
             }
         })
     })
-    
+
     useEffect(() => {
         fetchChats();
-        
+
     }, [selectedChat])
+
+    useEffect(() => {
+        if (mesgRef.current) {
+            mesgRef.current.scrollTop = mesgRef.current?.scrollHeight
+        }
+    }, [messages])
 
     const handleNotifications = async (noti: any) => {
         await joinRoom(noti.user, noti.message.chat, noti.message.sender);
-        var notis = notifications.filter((not) => {return noti != not});
+        compare = noti.message.chat
+        let notis = notifications.filter((not) => { return noti != not });
         setNotifications(notis)
     }
+
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setProg(10)
+        const files = e.target.files;
+        let image = ''
+        try {
+            
+            if (files) {
+                setLoading(true)
+                setProg(25)
+    
+                let file = files[0];
+    
+                const data = new FormData()
+                data.append('file', file!)
+                data.append('upload_preset', 'Product-Inventory')
+                data.append('cloud_name', "detuevaxw")
+                setProg(50)
+    
+                const response = await fetch('https://api.cloudinary.com/v1_1/detuevaxw/upload', {
+                    method: 'post',
+                    body: data,
+                })
+                setProg(75)
+                const json = await response.json()
+                image = json.url.toString()
+            }
+            else {
+                alert('please upload png or jpeg files or image not found.')
+            }
+            setProg(100)
+            setTimeout(() => {
+                setLoading(false)
+                setFile(image)
+            }, 2000)
+        } catch (error) {
+            toast.error("Error in sending file", {position: 'bottom-right', theme: "colored"})
+        }
+    }
+
+    const isUrl = (message: string) => {
+        let regex: RegExp = /([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?/gm;
+        return regex.test(message);
+    }
+
+    const isImage = (url: string) => {
+        return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+    };
+
+    const isVideo = (url: string) => {
+        return url.match(/\.(mp4|webm|ogg)$/) != null;
+    };
     return (
         <div>
             <div className="d-flex justify-content-between mx-5">
                 <Link to={'/home'} className='btn btn-dark m-2 text-center'>Go Back</Link>
                 <p className="fs-1 text-center mb-2 d-flex justify-content-center">Welcome to chat page</p>
                 <div className="dropdown">
-                <button type="button" className="btn btn-primary position-relative m-3 me-5" data-bs-toggle="dropdown" aria-expanded="false">
-                <i className='fa-solid fa-bell'></i>
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {notifications.length}
-                    <span className="visually-hidden">unread messages</span>
-                </span>
-                </button>
-                <ul className="dropdown-menu">
-                    {notifications.map((noti: any) => {
-                        return  <li><button className="dropdown-item" type="button" onClick={async () => await handleNotifications(noti)}>{`${noti.message.content} from "${noti.user}"`}</button></li>
-                    })}
-                </ul>
+                    <button type="button" className="btn btn-primary position-relative m-3 me-5" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i className='fa-solid fa-bell'></i>
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {notifications.length}
+                            <span className="visually-hidden">unread messages</span>
+                        </span>
+                    </button>
+                    <ul className="dropdown-menu">
+                        {notifications.map((noti: any) => {
+                            return <li><button className="dropdown-item" type="button" onClick={async () => await handleNotifications(noti)}>{`New Message from "${noti.user}"`}</button></li>
+                        })}
+                    </ul>
                 </div>
-                
+
             </div>
 
             <div className='container-fluid'>
@@ -126,7 +190,7 @@ const Chatpage = () => {
                             <div className="offcanvas-body">
                                 <div className='mt-2'>
                                     {users.length == 0 ? <div className='fs-5'>No Results found</div> : users.map((user: any) => <>{
-                                        <div className='w-auto shadow p-2 mb-2 bg-body-tertiary rounded border border-black' style={{ "cursor": "pointer" }} onClick={() => {createChat(userId, user.id, user.name); compare = user.id} }>
+                                        <div className='w-auto shadow p-2 mb-2 bg-body-tertiary rounded border border-black' style={{ "cursor": "pointer" }} onClick={() => { createChat(userId, user.id, user.name); compare = user.id }}>
                                             <div className="w-100 fs-5" >{user.name}</div>
                                         </div>
                                     }</>)}
@@ -137,8 +201,8 @@ const Chatpage = () => {
                             My Chats
                             <div className='mt-2'>
                                 {chats.map((chat) => <>{
-                                    <div className='w-auto shadow p-2 mb-2 bg-body-tertiary rounded border border-black' style={{ "cursor": "pointer" }} onClick={async () => { await joinRoom(chat[1], chat[0], chat[2]); compare = chat[0]}}>
-                                        <div className="w-100 fs-5" >{chat[1]}</div>
+                                    <div className='w-auto shadow p-2 mb-2 bg-body-tertiary rounded border border-black' style={{ "cursor": "pointer" }} onClick={async () => { await joinRoom(chat[1], chat[0], chat[2]); compare = chat[0]; }}>
+                                        <div className="w-100 fs-5 d-flex" >{chat[1]}</div>
                                     </div>
                                 }</>)}
                             </div>
@@ -150,28 +214,68 @@ const Chatpage = () => {
                                 {selectedChat}
                             </div>
 
-                            <div className='overflow-y-auto' style={{ "height": "490px" }}>
+                            <div className='overflow-y-auto' style={{ "height": "490px" }} ref={mesgRef}>
                                 {messages.map((message: any) =>
                                     <div className={`d-flex ${message.sender === userId ? "flex-row-reverse" : ""} fs-5 my-1 p-1`}>
-                                        <div className={`${message.sender === userId ? "bg-info-subtle" : "bg-success-subtle"} min-50 px-2 py-1 rounded`}>{message.content}</div>
+                                        <div className={`${message.sender === userId ? "bg-info-subtle" : "bg-success-subtle"} min-50 px-2 py-1 rounded `}>
+                                            {isUrl(message.content) ?
+                                                <p>{isImage(message.content) ? <img src={message.content} className="object-fit-fill border rounded" alt="image" style={{"width": "350px", "height": "350px"}}/> : 
+                                                <div>
+                                                    {isVideo(message.content) ? 
+                                                    <video src={message.content} className="object-fit-fill" style={{"width": "350px", "height": "250px"}} controls></video>: <a className="link-opacity-100-hover" href={message.content} target='_blank' >{message.content}</a>
+                                                    }
+                                                </div>
+                                                }</p>
+                                                :
+                                                <div>{message.content}</div>}
+                                        </div>
                                     </div>
                                 )}
                             </div>
 
                             <div className='d-flex'>
-                                    <InputEmojiWithRef
+                                <InputEmojiWithRef
                                     value={message}
                                     onChange={setMessage}
                                     shouldReturn={true}
                                     shouldConvertEmojiToImage={false}
-                                    onEnter={(e) => {handleSendMessage();}}
+                                    onEnter={(e) => { handleSendMessage(message); }}
                                     placeholder="Type a message"
                                     fontSize={20}
                                     borderColor='black'
                                     borderRadius={10}
                                     keepOpened={true}
                                     cleanOnEnter
-                                    />
+                                />
+
+                                <button ref={buttonRef} type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" hidden>
+                                    Launch demo modal
+                                </button>
+
+                                <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div className="modal-dialog modal-dialog-centered">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h1 className="modal-title fs-2" id="exampleModalLabel">Select a file to send</h1>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => {setLoading(false); setFile(""); }}></button>
+                                            </div>
+                                            <div className="modal-body">{
+                                                loading === true ? <div className="progress" role="progressbar" aria-label="Default striped example" aria-valuenow={10} aria-valuemin={0} aria-valuemax={100}>
+                                                <div className="progress-bar progress-bar-striped" style={{"width": `${prog}%`}}></div>
+                                              </div> :
+                                                    <input className="form-control form-control-lg" type="file" id="formFileMultiple" onChange={(e) => handleChange(e)}/>}
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-success btn-lg" onClick={() =>file === "" ? toast.error("Select a file to send", {position: "bottom-right", theme: "colored"}): handleSendMessage(file!)} data-bs-dismiss="modal">Send</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="btn border-black rounded p-3" onClick={() => buttonRef.current?.click()}>
+                                    <i className="fa-solid fa-upload" ></i>
+                                </div>
+
                             </div>
                         </div> : <div className='fs-1 d-flex justify-content-center'>Select a chat or search users to start messaging</div>}
                     </div>

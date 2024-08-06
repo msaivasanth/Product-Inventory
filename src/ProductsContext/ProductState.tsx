@@ -6,7 +6,7 @@ import { Search } from 'react-router-dom';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { toast } from 'react-toastify';
 
-var user = localStorage.getItem("userName");
+let user = localStorage.getItem("userName");
 interface ProductStateProps {
   children: ReactNode;
 }
@@ -56,7 +56,7 @@ interface ProductContextValue {
   fetchChats: () => Promise<void>,
   getUsers: (e: React.FormEvent<HTMLFormElement>) => Promise<void>,
   getMessages: (id: string, chatName: string) => Promise<void>,
-  handleSendMessage: () => Promise<void>,
+  handleSendMessage: (message: string) => Promise<void>,
   createChat: (id: string, sender: string, senderName: string) => Promise<void>,
   joinRoom: (user: string, room: string, receiverId: string) => Promise<void>,
   closeConnection: () => Promise<void>,
@@ -425,7 +425,7 @@ const ProductState: React.FC<ProductStateProps> = (props: any) => {
   }
 
   // 4. Send message to selected user
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (message: string) => {
     
       if(message === "") {
         toast.error("Enter something to send", {
