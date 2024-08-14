@@ -5,6 +5,7 @@ import Navbar from './Navbar'
 import ScrollToTop from 'react-scroll-to-top'
 import Loader from './Loader'
 import { toast } from 'react-toastify'
+import { BubbleChat } from 'flowise-embed-react'
 
 interface productProps {
   id: number,
@@ -93,6 +94,7 @@ const HomePage = () => {
             </>
           })): <Loader />}
         </div>
+        <BubbleChat chatflowid="90109be1-5fc3-4a29-b84d-a8f7d149e83b" apiHost="https://flowise-iun7.onrender.com"  />
       </div>
     </>
   )
